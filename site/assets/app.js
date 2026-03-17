@@ -1,13 +1,98 @@
 (function () {
-  const data = window.CODEX_WIKI_DATA || { docs: [], groups: [] };
+  const data = window.CODEX_WIKI_DATA || { docs: [], groups: [], homeSlugs: {} };
   const docs = data.docs || [];
   const docsBySlug = new Map(docs.map((doc) => [doc.slug, doc]));
-  const homeSlug = data.homeSlug || (docs[0] && docs[0].slug);
+
+  const UI = {
+    ru: {
+      brandEyebrow: "Local Knowledge Base",
+      brandName: "Codex CLI wiki",
+      pageEyebrow: "Offline HTML Edition",
+      searchLabel: "Поиск по словам и разделам",
+      searchPlaceholder: "Например: sandbox, API key, bugfix",
+      footerLabel: "Открытие через терминал",
+      tocEyebrow: "Навигация по документу",
+      mobileToggle: "Разделы",
+      homeButton: "README",
+      copyLink: "Скопировать ссылку",
+      copied: "Скопировано",
+      copyFailed: "Не удалось",
+      noResultsTitle: "Ничего не найдено",
+      noResultsBody: "Попробуй сократить запрос или переключить фильтр разделов.",
+      readmeHub: "README / Hub",
+      markdown: "Markdown",
+      sectionsWord: "разделов",
+      buildLabel: "Сборка",
+      openLabel: "Открытие",
+      sourceLabel: "Источник",
+      noToc: "У этого документа нет структурного оглавления.",
+      groups: {
+        all: "Все",
+        fundamentals: "Основы",
+        cli: "CLI",
+        integration: "Интеграция",
+        practice: "Практика",
+        examples: "Примеры",
+        docs: "Документы",
+      },
+    },
+    en: {
+      brandEyebrow: "Local Knowledge Base",
+      brandName: "Codex CLI wiki",
+      pageEyebrow: "Offline HTML Edition",
+      searchLabel: "Search by words and sections",
+      searchPlaceholder: "For example: sandbox, API key, bugfix",
+      footerLabel: "Open from terminal",
+      tocEyebrow: "Document navigation",
+      mobileToggle: "Sections",
+      homeButton: "Home",
+      copyLink: "Copy link",
+      copied: "Copied",
+      copyFailed: "Failed",
+      noResultsTitle: "Nothing found",
+      noResultsBody: "Try a shorter query or switch the section filter.",
+      readmeHub: "README / Hub",
+      markdown: "Markdown",
+      sectionsWord: "sections",
+      buildLabel: "Build",
+      openLabel: "Open",
+      sourceLabel: "Source",
+      noToc: "No table of contents for this page.",
+      groups: {
+        all: "All",
+        fundamentals: "Fundamentals",
+        cli: "CLI",
+        integration: "Integration",
+        practice: "Practice",
+        examples: "Examples",
+        docs: "Documents",
+      },
+    },
+  };
+
+  function detectLocale() {
+    const params = new URLSearchParams(window.location.hash.replace(/^#/, ""));
+    const hashLocale = params.get("lang");
+    if (hashLocale && UI[hashLocale]) {
+      return hashLocale;
+    }
+    const stored = window.localStorage.getItem("codexWikiLocale");
+    if (stored && UI[stored]) {
+      return stored;
+    }
+    const browser = (navigator.language || "").toLowerCase();
+    return browser.startsWith("ru") ? "ru" : "en";
+  }
+
+  function homeSlugFor(locale) {
+    return (data.homeSlugs && data.homeSlugs[locale]) || docs[0]?.slug || "";
+  }
 
   const state = {
     query: "",
-    group: "Все",
-    slug: homeSlug,
+    group: "all",
+    locale: detectLocale(),
+    slug: homeSlugFor(detectLocale()),
     section: "",
   };
 
@@ -26,21 +111,47 @@
     copyLinkButton: document.getElementById("copyLinkButton"),
     homeButton: document.getElementById("homeButton"),
     mobileToggle: document.getElementById("mobileToggle"),
+    langSwitch: document.getElementById("langSwitch"),
+    brandEyebrow: document.getElementById("brandEyebrow"),
+    brandName: document.getElementById("brandName"),
+    pageEyebrow: document.getElementById("pageEyebrow"),
+    searchLabel: document.getElementById("searchLabel"),
+    footerLabel: document.getElementById("footerLabel"),
+    tocEyebrow: document.getElementById("tocEyebrow"),
   };
+
+  function ui() {
+    return UI[state.locale] || UI.en;
+  }
+
+  function currentDocs() {
+    return docs.filter((doc) => doc.locale === state.locale);
+  }
+
+  function translateGroup(key) {
+    return ui().groups[key] || key;
+  }
 
   function decodeHash() {
     const hash = window.location.hash.replace(/^#/, "");
     const params = new URLSearchParams(hash);
-    const slug = params.get("doc");
-    const section = params.get("section");
-    return {
-      slug: slug && docsBySlug.has(slug) ? slug : homeSlug,
-      section: section || "",
-    };
+    let locale = params.get("lang");
+    if (!locale || !UI[locale]) {
+      locale = state.locale;
+    }
+    let slug = params.get("doc");
+    const section = params.get("section") || "";
+    if (slug && docsBySlug.has(slug)) {
+      locale = docsBySlug.get(slug).locale;
+    } else {
+      slug = homeSlugFor(locale);
+    }
+    return { locale, slug, section };
   }
 
-  function encodeHash(slug, section) {
+  function encodeHash(slug, section, locale) {
     const params = new URLSearchParams();
+    params.set("lang", locale);
     params.set("doc", slug);
     if (section) {
       params.set("section", section);
@@ -48,40 +159,67 @@
     return "#" + params.toString();
   }
 
-  function setRoute(slug, section) {
-    const nextHash = encodeHash(slug, section || "");
+  function mirrorSlug(locale, slug) {
+    const base = slug.startsWith("en/") ? slug.slice(3) : slug;
+    const candidate = locale === "en" ? "en/" + base : base;
+    if (docsBySlug.has(candidate)) {
+      return candidate;
+    }
+    return homeSlugFor(locale);
+  }
+
+  function setRoute(slug, section, locale) {
+    const actualLocale = locale || docsBySlug.get(slug)?.locale || state.locale;
+    const nextHash = encodeHash(slug, section || "", actualLocale);
     if (window.location.hash !== nextHash) {
       window.location.hash = nextHash;
       return;
     }
+    state.locale = actualLocale;
     state.slug = slug;
     state.section = section || "";
+    window.localStorage.setItem("codexWikiLocale", state.locale);
     render();
   }
 
   function groupDocs() {
     const grouped = new Map();
-    docs.forEach((doc) => {
-      if (state.group !== "Все" && doc.group !== state.group) {
+    currentDocs().forEach((doc) => {
+      if (state.group !== "all" && doc.groupKey !== state.group) {
         return;
       }
-      if (!grouped.has(doc.group)) {
-        grouped.set(doc.group, []);
+      if (!grouped.has(doc.groupKey)) {
+        grouped.set(doc.groupKey, []);
       }
-      grouped.get(doc.group).push(doc);
+      grouped.get(doc.groupKey).push(doc);
     });
     return grouped;
   }
 
-  function renderFilters() {
-    elements.filters.innerHTML = "";
-    (data.groups || []).forEach((group) => {
+  function renderLanguageSwitch() {
+    elements.langSwitch.innerHTML = "";
+    ["ru", "en"].forEach((locale) => {
       const button = document.createElement("button");
       button.type = "button";
-      button.className = "filter-chip" + (state.group === group ? " active" : "");
-      button.textContent = group;
+      button.className = "lang-button" + (state.locale === locale ? " active" : "");
+      button.textContent = locale.toUpperCase();
       button.addEventListener("click", function () {
-        state.group = group;
+        const nextSlug = mirrorSlug(locale, state.slug || homeSlugFor(state.locale));
+        setRoute(nextSlug, "", locale);
+      });
+      elements.langSwitch.appendChild(button);
+    });
+  }
+
+  function renderFilters() {
+    elements.filters.innerHTML = "";
+    (data.groups || []).forEach((groupKey) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "filter-chip" + (state.group === groupKey ? " active" : "");
+      button.textContent = translateGroup(groupKey);
+      button.addEventListener("click", function () {
+        state.group = groupKey;
         renderFilters();
         renderNav();
         renderSearch();
@@ -93,17 +231,17 @@
   function renderNav() {
     const grouped = groupDocs();
     elements.navTree.innerHTML = "";
-    for (const [group, items] of grouped.entries()) {
+    for (const [groupKey, items] of grouped.entries()) {
       const wrapper = document.createElement("div");
       wrapper.className = "nav-group";
       const title = document.createElement("div");
       title.className = "nav-group-title";
-      title.textContent = group;
+      title.textContent = translateGroup(groupKey);
       wrapper.appendChild(title);
       items.forEach((doc) => {
         const link = document.createElement("a");
         link.className = "nav-link" + (doc.slug === state.slug ? " active" : "");
-        link.href = encodeHash(doc.slug, "");
+        link.href = encodeHash(doc.slug, "", state.locale);
         link.innerHTML =
           '<span class="nav-link-title">' +
           escapeHtml(doc.title) +
@@ -113,7 +251,7 @@
           "</span>";
         link.addEventListener("click", function (event) {
           event.preventDefault();
-          setRoute(doc.slug, "");
+          setRoute(doc.slug, "", doc.locale);
         });
         wrapper.appendChild(link);
       });
@@ -153,8 +291,8 @@
     const tokens = normalized.split(/\s+/).filter(Boolean);
     const results = [];
 
-    docs.forEach((doc) => {
-      if (state.group !== "Все" && doc.group !== state.group) {
+    currentDocs().forEach((doc) => {
+      if (state.group !== "all" && doc.groupKey !== state.group) {
         return;
       }
 
@@ -170,7 +308,7 @@
           if (normalizeText(doc.title).includes(token)) {
             score += 22;
           }
-          if (normalizeText(doc.group).includes(token)) {
+          if (normalizeText(translateGroup(doc.groupKey)).includes(token)) {
             score += 14;
           }
           if (title.includes(token)) {
@@ -189,7 +327,7 @@
 
       if (bestScore > 0) {
         results.push({
-          doc: doc,
+          doc,
           section: bestSection,
           score: bestScore,
           snippet: snippetAround((bestSection && bestSection.text) || doc.text, tokens),
@@ -213,8 +351,12 @@
       const empty = document.createElement("div");
       empty.className = "search-result";
       empty.innerHTML =
-        '<div class="result-topline"><span class="result-title">Ничего не найдено</span></div>' +
-        '<div class="result-snippet">Попробуй сократить запрос или переключить фильтр разделов.</div>';
+        '<div class="result-topline"><span class="result-title">' +
+        escapeHtml(ui().noResultsTitle) +
+        "</span></div>" +
+        '<div class="result-snippet">' +
+        escapeHtml(ui().noResultsBody) +
+        "</div>";
       elements.searchResults.appendChild(empty);
       return;
     }
@@ -230,7 +372,7 @@
         escapeHtml(result.doc.title) +
         "</span>" +
         '<span class="result-section">' +
-        escapeHtml(result.section ? result.section.title : result.doc.group) +
+        escapeHtml(result.section ? result.section.title : translateGroup(result.doc.groupKey)) +
         "</span>" +
         "</div>" +
         '<div class="result-snippet">' +
@@ -240,7 +382,7 @@
         state.query = "";
         elements.searchInput.value = "";
         renderSearch();
-        setRoute(result.doc.slug, result.section && result.section.id);
+        setRoute(result.doc.slug, result.section && result.section.id, result.doc.locale);
       });
       elements.searchResults.appendChild(button);
     });
@@ -254,14 +396,16 @@
     elements.docHeader.innerHTML =
       '<div class="doc-meta-row">' +
       '<span class="meta-pill accent">' +
-      escapeHtml(doc.group) +
+      escapeHtml(translateGroup(doc.groupKey)) +
       "</span>" +
       '<span class="meta-pill">' +
-      escapeHtml(doc.isReadme ? "README / Hub" : "Markdown") +
+      escapeHtml(doc.isReadme ? ui().readmeHub : ui().markdown) +
       "</span>" +
       '<span class="meta-pill">' +
       escapeHtml(String(headingsCount)) +
-      " sections</span>" +
+      " " +
+      escapeHtml(ui().sectionsWord) +
+      "</span>" +
       "</div>" +
       "<h1>" +
       escapeHtml(doc.title) +
@@ -269,7 +413,9 @@
       '<div class="doc-excerpt">' +
       escapeHtml(doc.excerpt || "") +
       "</div>" +
-      '<div class="doc-source">Источник: <code>' +
+      '<div class="doc-source">' +
+      escapeHtml(ui().sourceLabel) +
+      ': <code>' +
       escapeHtml(doc.sourcePath) +
       "</code></div>";
   }
@@ -283,11 +429,11 @@
     elements.tocList.innerHTML = "";
 
     if (!headings.length) {
-      elements.tocList.innerHTML = '<div class="toc-meta">У этого документа нет структурного оглавления.</div>';
+      elements.tocList.innerHTML = '<div class="toc-meta">' + escapeHtml(ui().noToc) + "</div>";
     } else {
       headings.forEach((heading) => {
         const link = document.createElement("a");
-        link.href = encodeHash(doc.slug, heading.id);
+        link.href = encodeHash(doc.slug, heading.id, doc.locale);
         link.className =
           "toc-link level-" +
           Math.min(Math.max(heading.level, 1), 4) +
@@ -295,17 +441,19 @@
         link.textContent = heading.title;
         link.addEventListener("click", function (event) {
           event.preventDefault();
-          setRoute(doc.slug, heading.id);
+          setRoute(doc.slug, heading.id, doc.locale);
         });
         elements.tocList.appendChild(link);
       });
     }
 
     elements.tocMeta.innerHTML =
-      "Сборка: <code>" +
+      escapeHtml(ui().buildLabel) +
+      ": <code>" +
       escapeHtml((data.generatedAt || "").replace("T", " ").replace("Z", " UTC")) +
       "</code><br />" +
-      "Открытие: <code>wiki codex</code>";
+      escapeHtml(ui().openLabel) +
+      ": <code>wiki codex</code>";
   }
 
   function focusSection(sectionId) {
@@ -327,16 +475,37 @@
     });
   }
 
+  function applyLocaleUi() {
+    document.documentElement.lang = state.locale;
+    document.title = "Codex CLI wiki";
+    elements.brandEyebrow.textContent = ui().brandEyebrow;
+    elements.brandName.textContent = ui().brandName;
+    elements.pageEyebrow.textContent = ui().pageEyebrow;
+    elements.searchLabel.textContent = ui().searchLabel;
+    elements.searchInput.placeholder = ui().searchPlaceholder;
+    elements.footerLabel.textContent = ui().footerLabel;
+    elements.tocEyebrow.textContent = ui().tocEyebrow;
+    elements.mobileToggle.textContent = ui().mobileToggle;
+    elements.homeButton.textContent = ui().homeButton;
+    elements.copyLinkButton.textContent = ui().copyLink;
+  }
+
   function render() {
-    const doc = docsBySlug.get(state.slug) || docsBySlug.get(homeSlug);
+    applyLocaleUi();
+    renderLanguageSwitch();
+    const doc = docsBySlug.get(state.slug) || docsBySlug.get(homeSlugFor(state.locale));
     if (!doc) {
       return;
     }
-    document.title = doc.title + " · Codex Wiki";
+    state.locale = doc.locale;
+    window.localStorage.setItem("codexWikiLocale", state.locale);
+    document.title = doc.title + " · Codex CLI wiki";
     renderNav();
+    renderFilters();
     renderDocHeader(doc);
     renderDocContent(doc);
     renderToc(doc);
+    renderSearch();
     focusSection(state.section);
   }
 
@@ -349,6 +518,7 @@
 
   function handleHashChange() {
     const route = decodeHash();
+    state.locale = route.locale;
     state.slug = route.slug;
     state.section = route.section;
     render();
@@ -363,21 +533,21 @@
     navigator.clipboard
       .writeText(window.location.href)
       .then(function () {
-        elements.copyLinkButton.textContent = "Скопировано";
+        elements.copyLinkButton.textContent = ui().copied;
         setTimeout(function () {
-          elements.copyLinkButton.textContent = "Скопировать ссылку";
+          elements.copyLinkButton.textContent = ui().copyLink;
         }, 1200);
       })
       .catch(function () {
-        elements.copyLinkButton.textContent = "Не удалось";
+        elements.copyLinkButton.textContent = ui().copyFailed;
         setTimeout(function () {
-          elements.copyLinkButton.textContent = "Скопировать ссылку";
+          elements.copyLinkButton.textContent = ui().copyLink;
         }, 1200);
       });
   });
 
   elements.homeButton.addEventListener("click", function () {
-    setRoute(homeSlug, "");
+    setRoute(homeSlugFor(state.locale), "", state.locale);
   });
 
   elements.mobileToggle.addEventListener("click", function () {
@@ -394,6 +564,5 @@
 
   window.addEventListener("hashchange", handleHashChange);
 
-  renderFilters();
   handleHashChange();
 })();

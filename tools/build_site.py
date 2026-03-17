@@ -23,7 +23,8 @@ def slugify(text: str) -> str:
 
 
 def doc_href(slug: str, section: str | None = None) -> str:
-    href = f"#doc={quote(slug)}"
+    locale = locale_for_path(slug)
+    href = f"#lang={quote(locale)}&doc={quote(slug)}"
     if section:
         href += f"&section={quote(section)}"
     return href
@@ -43,6 +44,10 @@ def collect_docs() -> list[Path]:
             continue
         docs.append(path)
     return sorted(docs, key=lambda item: sort_key(item.relative_to(ROOT).as_posix()))
+
+
+def locale_for_path(rel: str) -> str:
+    return "en" if rel.startswith("en/") else "ru"
 
 
 def sort_key(rel: str) -> tuple:
@@ -66,16 +71,22 @@ def sort_key(rel: str) -> tuple:
 def group_for(rel: str) -> str:
     name = Path(rel).name
     if rel.startswith("examples/"):
-        return "Примеры"
+        return "examples"
+    if rel.startswith("en/examples/"):
+        return "examples"
     if rel in {"README.md", "INDEX.md"} or name.startswith(("01-", "02-", "03-", "04-")):
-        return "Основы"
+        return "fundamentals"
+    if rel.startswith("en/") and (
+        rel in {"en/README.md", "en/INDEX.md"} or name.startswith(("01-", "02-", "03-", "04-"))
+    ):
+        return "fundamentals"
     if name.startswith(("05-", "06-", "07-")):
-        return "CLI"
+        return "cli"
     if name.startswith(("08-", "09-")):
-        return "Интеграция"
+        return "integration"
     if name.startswith(("10-", "11-", "12-", "13-")) or name in {"cheatsheet.md", "playbooks.md"}:
-        return "Практика"
-    return "Документы"
+        return "practice"
+    return "docs"
 
 
 def strip_markdown(text: str) -> str:
@@ -334,12 +345,13 @@ def build_docs() -> list[dict]:
         result.append(
             {
                 "slug": rel.as_posix(),
+                "locale": locale_for_path(rel.as_posix()),
                 "title": title,
                 "sourcePath": rel.as_posix(),
-                "group": group_for(rel.as_posix()),
+                "groupKey": group_for(rel.as_posix()),
                 "order": order,
                 "isReadme": rel.name.startswith("README"),
-                "isExample": rel.as_posix().startswith("examples/"),
+                "isExample": rel.as_posix().startswith(("examples/", "en/examples/")),
                 "html": html_output,
                 "excerpt": excerpt or text[:180],
                 "text": text,
@@ -358,9 +370,9 @@ def main() -> None:
     docs = build_docs()
     payload = {
         "generatedAt": datetime.now(timezone.utc).isoformat(),
-        "homeSlug": "README.md",
+        "homeSlugs": {"ru": "README.md", "en": "en/README.md"},
         "docs": docs,
-        "groups": ["Все", "Основы", "CLI", "Интеграция", "Практика", "Примеры", "Документы"],
+        "groups": ["all", "fundamentals", "cli", "integration", "practice", "examples", "docs"],
     }
 
     content_js = "window.CODEX_WIKI_DATA = " + json.dumps(

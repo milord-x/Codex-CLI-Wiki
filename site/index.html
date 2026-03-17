@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Unofficial Codex CLI Wiki</title>
+    <title>Codex CLI wiki</title>
     <meta
       name="description"
       content="Локальная HTML-версия wiki по Codex CLI с поиском, оглавлением и офлайновой навигацией."
@@ -17,17 +17,19 @@
           <div class="brand">
             <div class="brand-mark">C</div>
             <div>
-              <div class="eyebrow">Local Knowledge Base</div>
-              <h1>Unofficial Codex Wiki</h1>
+              <div class="eyebrow" id="brandEyebrow">Local Knowledge Base</div>
+              <h1 id="brandName">Codex CLI wiki</h1>
             </div>
           </div>
+
+          <div class="lang-switch" id="langSwitch"></div>
 
           <button class="mobile-toggle" id="mobileToggle" type="button">
             Разделы
           </button>
 
           <label class="search-box" for="searchInput">
-            <span>Поиск по словам и разделам</span>
+            <span id="searchLabel">Поиск по словам и разделам</span>
             <input
               id="searchInput"
               type="search"
@@ -42,7 +44,7 @@
           <nav class="nav-tree" id="navTree"></nav>
 
           <div class="sidebar-footer">
-            <div class="footer-label">Открытие через терминал</div>
+            <div class="footer-label" id="footerLabel">Открытие через терминал</div>
             <code>wiki codex</code>
           </div>
         </div>
@@ -51,7 +53,7 @@
       <main class="content-area">
         <header class="page-toolbar">
           <div class="toolbar-copy">
-            <div class="eyebrow">Offline HTML Edition</div>
+            <div class="eyebrow" id="pageEyebrow">Offline HTML Edition</div>
             <div id="pageBreadcrumb">Codex CLI Wiki</div>
           </div>
           <div class="toolbar-actions">
@@ -68,7 +70,7 @@
 
       <aside class="toc-panel">
         <div class="toc-card">
-          <div class="eyebrow">Навигация по документу</div>
+          <div class="eyebrow" id="tocEyebrow">Навигация по документу</div>
           <div class="toc-list" id="tocList"></div>
           <div class="toc-meta" id="tocMeta"></div>
         </div>

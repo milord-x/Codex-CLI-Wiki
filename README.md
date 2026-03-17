@@ -1,32 +1,42 @@
-# Unofficial Codex CLI Wiki
+# Codex CLI wiki
 
-Независимая локальная wiki по ежедневной работе с Codex CLI: Markdown-версия, HTML-версия с поиском и launcher `wiki codex`.
+Открыть онлайн через GitHub Pages:
+
+- EN: https://milord-x.github.io/unofficial-codex-cli-wiki/#lang=en
+- RU: https://milord-x.github.io/unofficial-codex-cli-wiki/#lang=ru
+
+Независимая локальная wiki по ежедневной работе с Codex CLI: Markdown-версия, HTML-версия с поиском и launcher `wiki codex`. Если тебе нужно просто почитать wiki, Pages-ссылка выше удобнее, чем локальная сборка.
 
 ## Что внутри
 
 - структурированная wiki по Codex CLI на русском;
+- полное английское зеркало в `en/`;
 - офлайновый HTML-сайт с поиском по словам и разделам;
 - launcher `wiki codex` для быстрого открытия;
 - примеры prompts, `AGENTS.md` и skills.
 
 ## Быстрый старт
 
-### Открыть HTML-версию
+### Открыть без скачивания
+
+- Открой GitHub Pages по ссылкам выше.
+
+### Открыть HTML-версию из клонированного репозитория
 
 ```bash
-wiki codex
+./bin/wiki codex
 ```
 
-### Только пересобрать HTML
+### Только пересобрать HTML из клонированного репозитория
 
 ```bash
-wiki codex --build-only
+./bin/wiki codex --build-only
 ```
 
-### Только вывести путь к HTML
+### Только вывести путь к HTML из клонированного репозитория
 
 ```bash
-wiki codex --print-path
+./bin/wiki codex --print-path
 ```
 
 ### Собрать напрямую без launcher
@@ -41,12 +51,67 @@ python3 tools/build_site.py
 site/index.html
 ```
 
+Если у тебя уже установлен глобальный launcher, можно использовать и короткую форму:
+
+```bash
+wiki codex
+```
+
+## Скачать и использовать
+
+### Linux
+
+```bash
+git clone https://github.com/milord-x/unofficial-codex-cli-wiki.git
+cd unofficial-codex-cli-wiki
+./bin/wiki codex
+```
+
+Если нужен только rebuild:
+
+```bash
+python3 tools/build_site.py
+xdg-open site/index.html
+```
+
+### macOS
+
+```bash
+git clone https://github.com/milord-x/unofficial-codex-cli-wiki.git
+cd unofficial-codex-cli-wiki
+./bin/wiki codex
+```
+
+Если нужен только rebuild:
+
+```bash
+python3 tools/build_site.py
+open site/index.html
+```
+
+### Windows (PowerShell)
+
+```powershell
+git clone https://github.com/milord-x/unofficial-codex-cli-wiki.git
+cd unofficial-codex-cli-wiki
+powershell -ExecutionPolicy Bypass -File .\bin\wiki.ps1 codex
+```
+
+Если нужен только rebuild:
+
+```powershell
+py .\tools\build_site.py
+start .\site\index.html
+```
+
 ## Структура репозитория
 
 - `README.md` — стартовая точка и карта проекта.
 - `LICENSE` — permissive лицензия MIT.
+- `bin/` — launchers для локального открытия wiki.
 - `site/` — готовая HTML-версия wiki.
 - `tools/build_site.py` — генератор HTML из Markdown.
+- `en/` — английская версия документации.
 - `examples/` — примеры prompts, `AGENTS.md` и skills.
 
 ## Независимость и товарные знаки

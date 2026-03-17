@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT="$(CDPATH= cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
+BUILD_SCRIPT="${ROOT}/tools/build_site.py"
+INDEX_FILE="${ROOT}/site/index.html"
+
+if [[ $# -lt 1 ]]; then
+  printf 'Usage: ./bin/wiki codex [--build-only|--print-path]\n' >&2
+  exit 2
+fi
+
+topic="$1"
+shift
+
+if [[ "${topic}" != "codex" ]]; then
+  printf 'Unknown wiki topic: %s\n' "${topic}" >&2
+  printf 'Supported topic: codex\n' >&2
+  exit 2
+fi
+
+python3 "${BUILD_SCRIPT}"
+
+case "${1-}" in
+  --build-only)
+    printf 'Built: %s\n' "${INDEX_FILE}"
+    exit 0
+    ;;
+  --print-path)
+    printf '%s\n' "${INDEX_FILE}"
+    exit 0
+    ;;
+  "")
+    ;;
+  *)
+    printf 'Unknown option: %s\n' "${1}" >&2
+    printf 'Supported options: --build-only, --print-path\n' >&2
+    exit 2
+    ;;
+esac
+
+if command -v xdg-open >/dev/null 2>&1; then
+  nohup xdg-open "${INDEX_FILE}" >/dev/null 2>&1 &
+elif command -v open >/dev/null 2>&1; then
+  nohup open "${INDEX_FILE}" >/dev/null 2>&1 &
+fi
+
+printf 'Codex CLI wiki: %s\n' "${INDEX_FILE}"

@@ -1,63 +1,63 @@
 # Codex CLI wiki
 
-Открыть онлайн через GitHub Pages:
+Open online via GitHub Pages:
 
 - EN: https://milord-x.github.io/unofficial-codex-cli-wiki/#lang=en
 - RU: https://milord-x.github.io/unofficial-codex-cli-wiki/#lang=ru
 
-Независимая локальная wiki по ежедневной работе с Codex CLI: Markdown-версия, HTML-версия с поиском и launcher `wiki codex`. Если тебе нужно просто почитать wiki, Pages-ссылка выше удобнее, чем локальная сборка.
+An independent local wiki for daily work with Codex CLI: Markdown version, HTML version with search, and a `wiki codex` launcher. If you only need to read the wiki, the Pages link above is more convenient than building locally.
 
-## Что внутри
+## What’s inside
 
-- структурированная wiki по Codex CLI на русском;
-- полное английское зеркало в `en/`;
-- офлайновый HTML-сайт с поиском по словам и разделам;
-- launcher `wiki codex` для быстрого открытия;
-- примеры prompts, `AGENTS.md` и skills.
+- structured Codex CLI wiki in Russian;
+- full English mirror in `en/`;
+- offline HTML site with search by words and sections;
+- `wiki codex` launcher for quick access;
+- examples of prompts, `AGENTS.md`, and skills.
 
-## Быстрый старт
+## Quick start
 
-### Открыть без скачивания
+### Open without downloading
 
-- Открой GitHub Pages по ссылкам выше.
+- Open the GitHub Pages links above.
 
-### Открыть HTML-версию из клонированного репозитория
+### Open HTML version from cloned repository
 
 ```bash
 ./bin/wiki codex
 ```
 
-### Только пересобрать HTML из клонированного репозитория
+### Rebuild HTML only from cloned repository
 
 ```bash
 ./bin/wiki codex --build-only
 ```
 
-### Только вывести путь к HTML из клонированного репозитория
+### Print HTML path only from cloned repository
 
 ```bash
 ./bin/wiki codex --print-path
 ```
 
-### Собрать напрямую без launcher
+### Build directly without launcher
 
 ```bash
 python3 tools/build_site.py
 ```
 
-После сборки основной HTML-файл лежит в:
+After build, the main HTML file is located at:
 
 ```text
 site/index.html
 ```
 
-Если у тебя уже установлен глобальный launcher, можно использовать и короткую форму:
+If you already have the global launcher installed, you can use the short form:
 
 ```bash
 wiki codex
 ```
 
-## Скачать и использовать
+## Download and use
 
 ### Linux
 
@@ -67,7 +67,7 @@ cd unofficial-codex-cli-wiki
 ./bin/wiki codex
 ```
 
-Если нужен только rebuild:
+If you only need rebuild:
 
 ```bash
 python3 tools/build_site.py
@@ -82,7 +82,7 @@ cd unofficial-codex-cli-wiki
 ./bin/wiki codex
 ```
 
-Если нужен только rebuild:
+If you only need rebuild:
 
 ```bash
 python3 tools/build_site.py
@@ -97,90 +97,91 @@ cd unofficial-codex-cli-wiki
 powershell -ExecutionPolicy Bypass -File .\bin\wiki.ps1 codex
 ```
 
-Если нужен только rebuild:
+If you only need rebuild:
 
 ```powershell
 py .\tools\build_site.py
 start .\site\index.html
 ```
 
-## Структура репозитория
+## Repository structure
 
-- `README.md` — стартовая точка и карта проекта.
-- `LICENSE` — permissive лицензия MIT.
-- `bin/` — launchers для локального открытия wiki.
-- `site/` — готовая HTML-версия wiki.
-- `tools/build_site.py` — генератор HTML из Markdown.
-- `en/` — английская версия документации.
-- `examples/` — примеры prompts, `AGENTS.md` и skills.
+- `README.md` — entry point and project map.
+- `LICENSE` — permissive MIT license.
+- `bin/` — launchers for local wiki access.
+- `site/` — ready HTML version of the wiki.
+- `tools/build_site.py` — HTML generator from Markdown.
+- `en/` — English version of documentation.
+- `examples/` — examples of prompts, `AGENTS.md`, and skills.
 
-## Независимость и товарные знаки
+## Independence and trademarks
 
-- Это независимый неофициальный проект.
-- Он не аффилирован с OpenAI, не одобрен OpenAI и не спонсируется OpenAI.
-- Названия OpenAI, ChatGPT, GPT и Codex могут быть товарными знаками их правообладателей.
-- Эта лицензия не предоставляет прав на товарные знаки, логотипы или фирменный стиль OpenAI.
-- Если ты публикуешь форк или производную работу, не создавай впечатление, что это официальный проект OpenAI.
+- This is an independent unofficial project.
+- It is not affiliated with OpenAI, not endorsed by OpenAI, and not sponsored by OpenAI.
+- Names OpenAI, ChatGPT, GPT, and Codex may be trademarks of their respective owners.
+- This license does not grant rights to trademarks, logos, or branding of OpenAI.
+- If you publish a fork or derivative work, do not create the impression that it is an official OpenAI project.
 
-## Статус источников
+## Source status
 
-- Основной источник истины: официальная документация OpenAI по Codex.
-- Локальная верификация: `codex --help`, `codex <command> --help`, `codex --version`.
-- Проверенная локальная версия на этой машине: `codex-cli 0.115.0`.
+- Primary source of truth: official OpenAI Codex documentation.
+- Local verification: `codex --help`, `codex <command> --help`, `codex --version`.
+- Verified local version on this machine: `codex-cli 0.115.0`.
 
-Почему это важно:
+Why this matters:
 
-- Документация и CLI иногда расходятся по синтаксису между версиями.
-- В спорных местах сначала доверяй `codex --help` своей установленной версии.
-- В этой wiki такие расхождения помечены явно.
+- Documentation and CLI syntax may differ between versions.
+- In ambiguous cases, trust `codex --help` from your installed version first.
+- Such discrepancies are explicitly marked in this wiki.
 
-## Карта wiki
+## Wiki map
 
-- [01-installation.md](./01-installation.md) — установка и первичная проверка.
-- [02-auth-and-plans.md](./02-auth-and-plans.md) — вход через ChatGPT и через API key.
-- [03-basic-commands.md](./03-basic-commands.md) — минимальный набор команд для старта.
-- [04-interactive-workflow.md](./04-interactive-workflow.md) — практический интерактивный workflow.
-- [05-command-reference.md](./05-command-reference.md) — reference по командам и ключевым флагам.
-- [06-config.md](./06-config.md) — `~/.codex/config.toml`, профили, project overrides.
-- [07-models-and-modes.md](./07-models-and-modes.md) — модели, sandbox, approvals, `--oss`.
-- [08-skills.md](./08-skills.md) — skills, структура `SKILL.md`, примеры.
-- [09-agents-md.md](./09-agents-md.md) — как писать `AGENTS.md` и как он применяется.
-- [10-best-practices.md](./10-best-practices.md) — рабочие практики для реальных проектов.
-- [11-prompting.md](./11-prompting.md) — как писать промпты для Codex.
-- [12-debugging-recovery.md](./12-debugging-recovery.md) — безопасный багфикс, валидация, восстановление.
-- [13-anti-patterns.md](./13-anti-patterns.md) — частые ошибки и анти-паттерны.
-- [cheatsheet.md](./cheatsheet.md) — быстрые команды и рецепты.
-- [playbooks.md](./playbooks.md) — готовые сценарии работы.
-- [examples/prompts.md](./examples/prompts.md) — хорошие промпты по задачам.
-- [examples/agents.md.example](./examples/agents.md.example) — пример `AGENTS.md`.
-- [examples/skills/](./examples/skills/) — примеры skills.
-- [INDEX.md](./INDEX.md) — краткий индекс всех файлов.
+- [01-installation.md](./01-installation.md) — installation and initial verification.
+- [02-auth-and-plans.md](./02-auth-and-plans.md) — login via ChatGPT and API key.
+- [03-basic-commands.md](./03-basic-commands.md) — minimal command set to start.
+- [04-interactive-workflow.md](./04-interactive-workflow.md) — practical interactive workflow.
+- [05-command-reference.md](./05-command-reference.md) — reference for commands and key flags.
+- [06-config.md](./06-config.md) — `~/.codex/config.toml`, profiles, project overrides.
+- [07-models-and-modes.md](./07-models-and-modes.md) — models, sandbox, approvals, `--oss`.
+- [08-skills.md](./08-skills.md) — skills, `SKILL.md` structure, examples.
+- [09-agents-md.md](./09-agents-md.md) — how to write `AGENTS.md` and how it is applied.
+- [10-best-practices.md](./10-best-practices.md) — working practices for real projects.
+- [11-prompting.md](./11-prompting.md) — how to write prompts for Codex.
+- [12-debugging-recovery.md](./12-debugging-recovery.md) — safe bug fixing, validation, recovery.
+- [13-anti-patterns.md](./13-anti-patterns.md) — common mistakes and anti-patterns.
+- [cheatsheet.md](./cheatsheet.md) — quick commands and recipes.
+- [playbooks.md](./playbooks.md) — ready-to-use workflows.
+- [examples/prompts.md](./examples/prompts.md) — good prompts by task.
+- [examples/agents.md.example](./examples/agents.md.example) — example `AGENTS.md`.
+- [examples/skills/](./examples/skills/) — skill examples.
+- [INDEX.md](./INDEX.md) — concise index of all files.
 
-## Как пользоваться этой wiki
+## How to use this wiki
 
-1. Если ты ставишь Codex впервые, начинай с `01` и `02`.
-2. Если Codex уже установлен, прочитай `03`, `04`, `05`, `06`.
-3. Для постоянной повседневной работы держи рядом `cheatsheet.md`.
-4. Для задач в проекте используй `playbooks.md` и `examples/prompts.md`.
-5. Перед risky-run всегда сверяй `05-command-reference.md` и `07-models-and-modes.md`.
+1. If installing Codex for the first time, start with `01` and `02`.
+2. If Codex is already installed, read `03`, `04`, `05`, `06`.
+3. For daily work, keep `cheatsheet.md` nearby.
+4. For project tasks, use `playbooks.md` and `examples/prompts.md`.
+5. Before risky runs, check `05-command-reference.md` and `07-models-and-modes.md`.
 
-## HTML-версия
+## HTML version
 
-- Локальная HTML-версия собирается в `site/index.html`.
-- Быстрый запуск из терминала: `wiki codex`
-- Только пересобрать без открытия: `wiki codex --build-only`
-- Только вывести путь к HTML-файлу: `wiki codex --print-path`
+- Local HTML version is built into `site/index.html`.
+- Quick launch from terminal: `wiki codex`
+- Rebuild only: `wiki codex --build-only`
+- Print HTML path: `wiki codex --print-path`
 
-## Важные версионные замечания
+## Important version notes
 
-- Локальный `codex-cli 0.115.0` показывает `codex login --with-api-key`, читающий ключ из `stdin`.
-- Часть официальных примеров все еще использует форму `codex login --api-key ...`.
-- В таких случаях эта wiki приводит обе формы, но рекомендует сначала проверить `codex login --help`.
-- Локальная справка также помечает `on-failure` как deprecated approval mode.
+- Local `codex-cli 0.115.0` uses `codex login --with-api-key` reading the key from `stdin`.
+- Some official examples still use `codex login --api-key ...`.
+- This wiki includes both forms but recommends checking `codex login --help` first.
+- Local help also marks `on-failure` as a deprecated approval mode.
 
-## Источники
+## Sources
 
-- Официальная документация Codex: https://developers.openai.com/codex
-- Аутентификация Codex: https://developers.openai.com/codex/auth
-- Официальный пакет `@openai/codex` и встроенный README локальной установки
-- Справка локального CLI: `codex --help`
+- Official Codex documentation: https://developers.openai.com/codex
+- Codex authentication: https://developers.openai.com/codex/auth
+- Official package `@openai/codex` and its local README
+- Local CLI help: `codex --help`
+

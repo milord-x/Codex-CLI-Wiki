@@ -75,7 +75,7 @@ wiki codex
 ### Linux
 
 ```bash
-git clone https://github.com/milord-x/unofficial-codex-cli-wiki.git
+git clone https://github.com/milord-x/Codex-CLI-Wiki.git
 cd unofficial-codex-cli-wiki
 ./bin/wiki codex
 ```
@@ -90,7 +90,7 @@ xdg-open site/index.html
 ### macOS
 
 ```bash
-git clone https://github.com/milord-x/unofficial-codex-cli-wiki.git
+git clone https://github.com/milord-x/Codex-CLI-Wiki.git
 cd unofficial-codex-cli-wiki
 ./bin/wiki codex
 ```
@@ -105,7 +105,7 @@ open site/index.html
 ### Windows (PowerShell)
 
 ```powershell
-git clone https://github.com/milord-x/unofficial-codex-cli-wiki.git
+git clone https://github.com/milord-x/Codex-CLI-Wiki.git
 cd unofficial-codex-cli-wiki
 powershell -ExecutionPolicy Bypass -File .\bin\wiki.ps1 codex
 ```

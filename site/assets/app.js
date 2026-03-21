@@ -382,12 +382,45 @@
 
   function renderDocContent(doc) {
     elements.docContent.innerHTML = doc.html;
+    
     elements.docContent.querySelectorAll('a').forEach(link => {
       if (link.href && !link.href.startsWith('#') && !link.href.startsWith(window.location.origin)) {
         link.target = '_blank';
         link.rel = 'noreferrer noopener';
       }
     });
+    
+    // Remove HTML badges and images from README/markdown files
+    elements.docContent.querySelectorAll('p, div, h1, h2').forEach(el => {
+      const html = el.innerHTML || '';
+      // Skip if it's a real content element
+      if (el.tagName === 'P' && el.querySelector('code, strong, em, a:not(img)')) return;
+      if (el.tagName === 'H1' && el.textContent.length > 10) return;
+      if (el.tagName === 'H2' && el.textContent.length > 10) return;
+      
+      // Hide elements containing only shields.io badges or centered images
+      if (html.includes('shields.io') || html.includes('img.shields')) {
+        el.remove();
+        return;
+      }
+      
+      // Hide standalone image elements (screenshot.png, etc)
+      if (el.tagName === 'P' && el.querySelector('img') && el.querySelectorAll('img, a').length <= 2) {
+        const imgs = el.querySelectorAll('img');
+        const isOnlyImages = Array.from(imgs).every(img => 
+          img.src.includes('.png') || img.src.includes('.jpg') || img.src.includes('.gif')
+        );
+        if (isOnlyImages) {
+          el.remove();
+        }
+      }
+    });
+    
+    // Remove h1 if it looks like a badge header
+    const firstH1 = elements.docContent.querySelector('h1');
+    if (firstH1 && (firstH1.innerHTML.includes('img') || firstH1.textContent.includes('Badge'))) {
+      firstH1.remove();
+    }
   }
 
   function renderToc(doc) {

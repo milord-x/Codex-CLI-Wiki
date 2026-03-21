@@ -623,6 +623,42 @@ body {
   margin-top: 0;
 }
 
+/* Hide HTML badges and header images in doc content */
+.doc-content > p:first-child:has(img[src*="shields.io"]) {
+  display: none;
+}
+
+.doc-content > p:has(img[src*="shields.io"]) {
+  display: none;
+}
+
+.doc-content > p:first-child > img[src*="shields.io"],
+.doc-content > p > img[src*="shields.io"] {
+  display: none;
+}
+
+.doc-content > h1:first-child {
+  display: none;
+}
+
+.doc-content > p:first-child:has(a > img[src*="shields.io"]) {
+  display: none;
+}
+
+.doc-content > p:first-child:has(img[src="screenshot.png"]) {
+  display: none;
+}
+
+.doc-content > p > img[src="screenshot.png"] {
+  display: none;
+}
+
+/* Make first paragraph less prominent if badges are hidden */
+.doc-card:not(.is-home) .doc-content > p:first-of-type {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
 .doc-content h1,
 .doc-content h2,
 .doc-content h3,

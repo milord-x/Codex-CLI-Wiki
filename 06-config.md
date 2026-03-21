@@ -1,14 +1,14 @@
 # 06. `config.toml`
 
-## Где лежит файл
+## File location
 
-Базовый путь:
+Base path:
 
 ```text
 ~/.codex/config.toml
 ```
 
-На этой машине локально подтверждено наличие файла:
+On this machine, a local config already exists:
 
 ```toml
 model = "gpt-5.4"
@@ -18,30 +18,30 @@ model_reasoning_effort = "xhigh"
 trust_level = "trusted"
 ```
 
-## Что это такое
+## What it is
 
-`config.toml` хранит постоянные настройки CLI:
+`config.toml` stores persistent CLI defaults:
 
-- дефолтную модель;
+- default model;
 - reasoning effort;
-- sandbox/approval defaults;
+- sandbox and approval defaults;
 - feature flags;
 - profiles;
 - project-specific overrides;
 - MCP configuration.
 
-## Как работает приоритет
+## Practical precedence
 
-Практическое правило:
+Use this mental model:
 
-1. явные CLI overrides через `-c` и flags;
-2. выбранный `--profile`;
-3. базовый `~/.codex/config.toml`;
-4. project-specific блоки `[projects."..."]`.
+1. CLI overrides via flags and `-c`
+2. selected `--profile`
+3. base `~/.codex/config.toml`
+4. project-specific `[projects."..."]` blocks
 
-Если поведение неожиданное, сначала ищи override в командной строке.
+If behavior is surprising, first look for a command-line override.
 
-## Минимальный полезный пример
+## Minimal useful example
 
 ```toml
 model = "gpt-5.4"
@@ -61,69 +61,65 @@ model_reasoning_effort = "medium"
 trust_level = "trusted"
 ```
 
-## Что означает `trust_level`
+## `trust_level`
 
-`trust_level = "trusted"` говорит CLI, что проект доверенный. Это влияет на UX безопасности и automation workflow.
+`trust_level = "trusted"` tells the CLI that this project is trusted. That affects the safety and automation UX around the repo.
 
-Когда использовать:
+Use when:
 
-- свой репозиторий;
-- понятный внутренний код;
-- локальная dev-среда.
+- it is your own repo;
+- the codebase is understood;
+- the environment is controlled.
 
-Когда не использовать:
+Do not use when:
 
-- чужой неизвестный репозиторий;
-- временный каталог с непонятными скриптами.
+- the repo is unknown or untrusted;
+- you are auditing third-party code.
 
-## Профили
+## Profiles
 
-Профиль — именованный набор настроек.
+A profile is a named config bundle.
 
-Пример запуска:
+Examples:
 
 ```bash
 codex -p review
 codex exec -p fast "summarize this repository"
 ```
 
-Рекомендуемые профили:
+Useful profiles:
 
-- `review` — `read-only` + conservative approval;
-- `fast` — сниженный reasoning effort;
-- `deep` — высокий reasoning effort;
-- `danger` — только для очень осознанных controlled сценариев.
+- `review` — read-only plus conservative approvals
+- `fast` — lower reasoning effort
+- `deep` — higher reasoning effort
+- `danger` — only for carefully controlled cases
 
-## Временный override без правки файла
+## Temporary overrides
 
 ```bash
 codex -c model=\"gpt-5.4\" -c model_reasoning_effort=\"high\"
 codex -c approval_policy=\"on-request\"
 ```
 
-Когда использовать:
+Use when:
 
-- one-shot задачи;
-- A/B проверка настроек.
+- you are testing a one-off variation;
+- you do not want to edit the config permanently.
 
-Когда не использовать:
+## Common mistakes
 
-- если режим нужен постоянно, оформи его профилем.
+- using relative paths inside `[projects."..."]`;
+- forgetting TOML quoting;
+- mixing permanent and one-off settings;
+- storing secrets directly in the config.
 
-## Типичные ошибки
+## Security
 
-- писать относительные пути в `[projects."..."]` вместо абсолютных;
-- забывать кавычки TOML;
-- смешивать постоянные настройки с временными CLI override;
-- хранить секреты прямо в конфиге.
+- keep API keys in environment or secret stores when possible;
+- review `trust_level` carefully;
+- do not enable risky defaults globally if only one repo needs them.
 
-## Безопасность
-
-- не клади API keys в `config.toml`, если есть env/secrets;
-- внимательно проверяй `trust_level`;
-- не включай risky settings глобально, если они нужны только одному repo.
-
-## Источники
+## Sources
 
 - https://developers.openai.com/codex/config-basic
 - https://developers.openai.com/codex/config-advanced

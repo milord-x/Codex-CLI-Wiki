@@ -184,13 +184,13 @@ body {
 .lang-btn {
   flex: 1;
   min-width: 0;
-  padding: 6px 8px;
+  padding: 6px 4px;
   border: none;
   border-radius: var(--radius-sm);
   background: transparent;
   color: var(--text-secondary);
   font-family: var(--font-sans);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   cursor: pointer;
   transition: var(--transition);

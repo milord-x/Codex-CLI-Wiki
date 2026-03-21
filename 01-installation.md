@@ -1,78 +1,75 @@
-# 01. Установка
+# 01. Installation
 
-## Что это
+## What this is
 
-Codex CLI — локальный агент кодинга от OpenAI, запускаемый из терминала.
+Codex CLI is a local coding agent from OpenAI that runs in your terminal.
 
-## Основные способы установки
+## Install methods
 
-### Через npm
+### npm
 
-Синтаксис:
+Syntax:
 
 ```bash
 npm install -g @openai/codex
 ```
 
-Что делает:
+What it does:
 
-- Устанавливает CLI глобально в текущую Node.js-среду.
+- installs the CLI globally into your active Node/npm environment.
 
-Когда использовать:
+Use when:
 
-- Linux/macOS.
-- Уже есть рабочий Node.js/npm.
-- Нужна предсказуемая установка без Homebrew.
+- you are on Linux or macOS;
+- Node.js and npm are already working;
+- you want a predictable install path.
 
-Когда не использовать:
+Do not use when:
 
-- Если глобальные npm-пакеты запрещены политикой компании.
-- Если у тебя сломан `PATH` или конфликтуют несколько Node installation roots.
+- global npm packages are blocked by policy;
+- your PATH or npm global prefix is broken.
 
-Пример проверки:
+Verify:
 
 ```bash
 codex --version
 codex --help
 ```
 
-Типичные ошибки:
+Typical errors:
 
-- `codex: command not found` — бинарник не попал в `PATH`.
-- старая Node.js или сломанный npm global prefix.
+- `codex: command not found`
+- outdated Node.js
+- wrong npm global prefix
 
-Безопасность:
+Security:
 
-- Ставь пакет только из официального `@openai/codex`.
-- Не запускай неподтвержденные post-install workaround-скрипты из интернета.
+- install only the official `@openai/codex` package;
+- avoid random install workarounds from third-party blogs.
 
-### Через Homebrew
+### Homebrew
 
-Синтаксис:
+Syntax:
 
 ```bash
 brew install codex
 ```
 
-Что делает:
+What it does:
 
-- Устанавливает Codex через Homebrew.
+- installs Codex through Homebrew.
 
-Когда использовать:
+Use when:
 
-- macOS.
-- Хочешь обновление и удаление через brew workflow.
+- you are on macOS;
+- Homebrew is your normal package workflow.
 
-Когда не использовать:
+Do not use when:
 
-- Если проектная машина не использует Homebrew.
+- your machine does not use brew;
+- another install method already owns your `codex` binary.
 
-Типичные ошибки:
-
-- устаревший tap или неактуальная формула;
-- конфликт с ранее установленным npm-вариантом.
-
-## Первичная проверка
+## First verification
 
 ```bash
 codex --version
@@ -80,26 +77,26 @@ codex --help
 codex login status
 ```
 
-Минимальный критерий готовности:
+Minimum success criteria:
 
-- команда `codex` находится в `PATH`;
-- версия печатается без ошибки;
-- `--help` показывает список команд;
-- дальше можно переходить к авторизации.
+- `codex` is in `PATH`;
+- the version prints;
+- `--help` shows the command list;
+- auth setup can start next.
 
-## Что делать сразу после установки
+## Immediate next steps
 
-1. Настрой авторизацию.
-2. Проверь shell completion, если часто используешь CLI.
-3. Создай базовый `~/.codex/config.toml`, если нужен свой дефолтный model/sandbox/profile.
+1. Configure authentication.
+2. Enable shell completion if you use the CLI often.
+3. Create a basic `~/.codex/config.toml` if you want model or sandbox defaults.
 
-## Не делай так
+## Do not do this
 
-- Не ставь Codex внутрь случайного project virtualenv, если нужен глобальный CLI.
-- Не смешивай несколько способов установки без понимания, какой бинарник первым в `PATH`.
-- Не начинай работу до проверки `codex --help` на своей машине.
+- do not install Codex into a random project virtualenv if you want a system CLI;
+- do not mix multiple install methods without checking which binary wins in `PATH`;
+- do not start real work before checking `codex --help` locally.
 
-## Источники
+## Sources
 
 - https://developers.openai.com/codex
-- локальный README пакета `@openai/codex`
+- local `@openai/codex` README

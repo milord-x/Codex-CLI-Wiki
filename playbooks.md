@@ -1,41 +1,41 @@
 # Playbooks
 
-## 1. Старт нового проекта
+## 1. Start a new project
 
-Цель:
+Goal:
 
-- получить skeleton, а не хаотичную кодогенерацию.
+- get a clean MVP skeleton instead of uncontrolled code generation.
 
-Шаги:
+Steps:
 
-1. Определи стек, ограничения и цель проекта.
-2. Попроси сначала архитектурный план и структуру каталогов.
-3. После подтверждения генерируй по модулям.
-4. В конце зафиксируй команды запуска и smoke-check.
+1. define the stack, constraints, and target outcome;
+2. ask for architecture and directory structure first;
+3. generate module by module after approval;
+4. finish with run commands and a smoke test.
 
-Команда:
+Command:
 
 ```bash
 codex -C ~/new-project
 ```
 
-Стартовый prompt:
+Prompt:
 
 ```text
-Нужен новый проект под требования: ...
-Сначала предложи архитектуру, структуру каталогов и минимальный набор файлов. Ничего не генерируй сверх MVP. После подтверждения создай проект и дай команды запуска.
+I need a new project for these requirements: ...
+First propose the architecture, directory structure, and minimum file set. Do not generate more than the MVP. After approval, create the project and give me run commands.
 ```
 
-## 2. Анализ чужого репозитория
+## 2. Analyze an unfamiliar repository
 
-Шаги:
+Steps:
 
-1. Запусти только read-only режим.
-2. Попроси карту репозитория.
-3. Найди entrypoint, тесты, команды запуска и риски.
-4. Только после этого переходи к правкам.
+1. start in read-only mode;
+2. ask for a repo map;
+3. identify entrypoint, tests, run commands, and risk areas;
+4. edit only after the analysis is clear.
 
-Команда:
+Command:
 
 ```bash
 codex -C ~/repo -s read-only -a untrusted
@@ -44,71 +44,65 @@ codex -C ~/repo -s read-only -a untrusted
 Prompt:
 
 ```text
-Изучи репозиторий как новый инженер. Найди entrypoint, тесты, команды запуска, ключевые модули и технические риски. Сначала только анализ, без правок.
+Study this repository like a new engineer. Find the entrypoint, tests, run commands, key modules, and technical risks. Analysis only, no edits.
 ```
 
-## 3. Точечное исправление бага
+## 3. Fix a focused bug
 
-Шаги:
+Steps:
 
-1. Сохрани checkpoint.
-2. Попроси воспроизведение и root cause.
-3. Разреши только минимальный patch.
-4. Попроси regression test и targeted validation.
-
-Команда:
-
-```bash
-codex -C ~/repo
-```
+1. create a checkpoint;
+2. ask for reproduction and root cause;
+3. allow only the smallest useful patch;
+4. request a regression test and targeted validation.
 
 Prompt:
 
 ```text
-Воспроизведи баг из traceback ниже. Исправь минимальным patch. Не меняй public API и unrelated файлы. Если возможно, добавь regression test. После правки прогони релевантные проверки и перечисли риски.
+Reproduce the bug from the traceback below. Fix it with the smallest useful patch. Do not change the public API or unrelated files. Add a regression test if appropriate. Then run the relevant checks and list the remaining risks.
 ```
 
-## 4. Безопасный рефакторинг
+## 4. Safe refactoring
 
-Шаги:
+Steps:
 
-1. Зафиксируй non-goals.
-2. Ограничься одним модулем или слоем.
-3. Требуй behavioral parity.
-4. Сравни diff и прогони тесты.
+1. define non-goals;
+2. keep the work inside one module or layer;
+3. require behavioral parity;
+4. compare the diff and run tests.
 
 Prompt:
 
 ```text
-Сделай рефактор только в модуле X. Цель: убрать дублирование и упростить чтение. Поведение и public API менять нельзя. После правки прогони существующие тесты для этого модуля и опиши, как ты сохранил прежнее поведение.
+Refactor only module X. Goal: remove duplication and improve readability. Behavior and public API must stay the same. After the edits, run the existing tests for this module and explain how behavior was preserved.
 ```
 
-## 5. Завершение незаконченного проекта
+## 5. Finish an unfinished project
 
-Шаги:
+Steps:
 
-1. Сначала обзор текущего состояния.
-2. Попроси определить незавершенные части.
-3. Приоритизируй блокеры.
-4. Закрывай по одному блоку с валидацией.
+1. inspect current state first;
+2. list unfinished areas;
+3. prioritize blockers;
+4. close one blocker at a time with validation.
 
 Prompt:
 
 ```text
-Проанализируй проект и определи, что в нем недоделано для рабочего MVP. Сначала составь список блокеров и предложи порядок завершения. После этого возьми только первый блок и доведи его до верифицируемого состояния.
+Analyze the project and identify what is missing for a usable MVP. First produce a blocker list and execution order. Then take only the first blocker and bring it to a verifiable state.
 ```
 
-## 6. Создание документации
+## 6. Create documentation
 
-Шаги:
+Steps:
 
-1. Попроси найти реальные команды и конфиги в repo.
-2. Запрети выдумывать неподтвержденные детали.
-3. Сгенерируй документацию по фактам.
-4. Проверь diff и ссылки на файлы.
+1. find real commands and config in the repo;
+2. forbid invented setup steps;
+3. generate docs from confirmed facts only;
+4. review paths and command accuracy before finishing.
 
 Prompt:
 
 ```text
-Создай документацию для разработчиков по текущему репозиторию. Не выдумывай команды, зависимости и пути: сначала найди их в коде и конфигурации. Если что-то не подтверждено, явно пометь это как предположение.
+Create developer documentation for the current repository. Do not invent commands, dependencies, or paths: first find them in code and config. If something is not confirmed, mark it as an assumption.
 ```

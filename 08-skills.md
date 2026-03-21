@@ -1,53 +1,51 @@
 # 08. Skills
 
-## Что это
+## What this is
 
-Skill — это переиспользуемый пакет инструкций и вспомогательных файлов для узкой задачи.
+A skill is a reusable package of instructions and helper assets for a narrow, repeatable task.
 
-Обычно skill содержит:
+Typical contents:
 
-- `SKILL.md` — основной документ навыка;
-- `scripts/` — утилиты и автоматизация;
-- `assets/` или `references/` — шаблоны, примеры, справочные материалы.
+- `SKILL.md` — the core instructions;
+- `scripts/` — automation helpers;
+- `assets/` or `references/` — templates or reference material.
 
-## Когда использовать
+## Use skills when
 
-Используй skill, если задача:
+- a task repeats;
+- the workflow should stay stable;
+- domain rules matter;
+- helper scripts or templates save time.
 
-- повторяется;
-- требует стабильного workflow;
-- зависит от доменных правил;
-- выигрывает от готовых скриптов и шаблонов.
+Examples:
 
-Примеры:
+- safe Python bug fixing;
+- repository documentation generation;
+- onboarding for a specific monorepo;
+- release checklists.
 
-- безопасный Python bugfix;
-- генерация документации;
-- onboarding по конкретному монорепо;
-- release checklist.
+## Do not use skills when
 
-## Когда не использовать
+- it is a one-off instruction;
+- the rules belong to the whole repository;
+- you are about to store secrets or transient runtime state.
 
-- для разового запроса;
-- для общих правил репозитория;
-- для секретов, токенов и окружения.
+For stable repository-wide rules, use `AGENTS.md`.
 
-Для постоянных репозиторных правил лучше подходит `AGENTS.md`.
+## Where to store them
 
-## Где хранить
+Useful locations:
 
-Практически полезные места:
+- user skills: `~/.codex/skills/`
+- examples in this repo: `examples/skills/`
 
-- пользовательские skills: `~/.codex/skills/`
-- примеры в этой wiki: `examples/skills/`
-
-На этой машине локально подтвержден системный каталог:
+On this machine, a system skills directory also exists:
 
 ```text
 ~/.codex/skills/.system/
 ```
 
-## Минимальная структура
+## Minimal structure
 
 ```text
 my-skill/
@@ -56,63 +54,44 @@ my-skill/
   assets/
 ```
 
-## Что писать в `SKILL.md`
+## What to write in `SKILL.md`
 
-Минимум:
+Minimum useful content:
 
-- назначение навыка;
-- когда применять;
-- входные данные;
-- шаги workflow;
-- ограничения;
-- команды верификации;
+- what the skill is for;
+- when to apply it;
+- required inputs;
+- workflow steps;
+- constraints;
+- validation commands;
 - expected output.
 
-Хороший `SKILL.md` должен:
+Good skills are:
 
-- быть узким;
-- не дублировать `AGENTS.md`;
-- не быть расплывчатым;
-- не зависеть от неявного контекста.
+- narrow;
+- reusable;
+- explicit;
+- not dependent on hidden context.
 
-## Практический шаблон
+## Typical mistakes
 
-```md
-# Python Bugfix Skill
+- making the skill too broad;
+- storing secrets in the skill;
+- using brittle absolute paths;
+- duplicating repository policy that belongs in `AGENTS.md`.
 
-## Use this skill when
-- есть воспроизводимый Python bug;
-- нужно исправить ошибку минимальным patch;
-- можно проверить через pytest.
+## Security
 
-## Workflow
-1. воспроизведи проблему;
-2. найди минимальную область кода;
-3. внеси минимальное исправление;
-4. добавь/обнови тест;
-5. прогони релевантные проверки;
-6. кратко опиши риск регрессии.
-```
+- skill scripts are executable code and should be treated like normal programs;
+- avoid destructive steps unless explicitly justified;
+- keep only reusable knowledge here, not secrets.
 
-## Типичные ошибки
-
-- делать skill слишком широким;
-- помещать туда секреты;
-- кодировать хрупкие абсолютные пути;
-- дублировать project policy, которая должна жить в `AGENTS.md`.
-
-## Безопасность
-
-- skill scripts — это исполняемый код, относись к ним как к обычным программам;
-- не включай destructive команды без явной нужды;
-- храни только reusable knowledge, а не runtime-секреты.
-
-## См. также
+## See also
 
 - [09-agents-md.md](./09-agents-md.md)
 - [examples/skills/README.md](./examples/skills/README.md)
 
-## Источники
+## Sources
 
 - https://developers.openai.com/codex/skills
-- локальная структура `~/.codex/skills/`
+- local `~/.codex/skills/` layout

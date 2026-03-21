@@ -1,66 +1,57 @@
-# 03. Базовые команды
+# 03. Basic commands
 
-## Минимальный набор на каждый день
+## Minimum useful set
 
 ### `codex`
 
-Что это:
+What it is:
 
-- интерактивный TUI/CLI-сеанс.
+- the interactive TUI/CLI session.
 
-Синтаксис:
+Syntax:
 
 ```bash
 codex
-codex "исправь failing test в текущем репозитории"
+codex "fix the first failing test in this repo"
 codex -C /path/to/repo
 ```
 
-Когда использовать:
+Use when:
 
-- исследование репозитория;
-- итеративная работа;
-- задачи, где полезен диалог.
+- you need exploration;
+- you want iterative back-and-forth;
+- the task may branch.
 
-Когда не использовать:
+Do not use when:
 
-- CI и автоматизация;
-- сценарии, где нужен только финальный JSON/текст без TUI.
+- you need a non-interactive CI step;
+- you only need a machine-readable result.
 
 ### `codex exec`
 
-Что это:
+What it is:
 
-- неинтерактивный режим.
+- non-interactive execution.
 
-Синтаксис:
+Syntax:
 
 ```bash
-codex exec "run tests, fix the first failure, summarize changes"
+codex exec "run tests, fix the first failure, summarize the changes"
 ```
 
-Что делает:
+Use when:
 
-- выполняет задачу без интерактивного TUI;
-- удобен для скриптов и повторяемых запусков.
-
-Когда использовать:
-
-- shell automation;
-- reproducible one-shot задачи;
-- CI hooks с контролируемым output.
-
-Когда не использовать:
-
-- если ожидается длинный диалог и развилка решений.
+- you want repeatable one-shot runs;
+- shell automation matters;
+- you need JSON or structured output.
 
 ### `codex review`
 
-Что это:
+What it is:
 
 - non-interactive code review.
 
-Синтаксис:
+Syntax:
 
 ```bash
 codex review --uncommitted
@@ -68,100 +59,86 @@ codex review --base main
 codex review --commit <sha>
 ```
 
-Что делает:
+Use when:
 
-- анализирует diff/изменения и выдает review findings.
+- self-reviewing changes before a commit or PR;
+- checking staged, unstaged, or commit-based diffs.
 
-Когда использовать:
+### `codex resume` and `codex fork`
 
-- self-review перед commit/PR;
-- быстрый check staged/unstaged changes.
+- `resume` continues an older session;
+- `fork` creates a new branch of thought from an older session.
 
-Когда не использовать:
+Use when:
 
-- если нужен полноценный fix, а не review.
-
-### `codex resume` и `codex fork`
-
-Что это:
-
-- `resume` продолжает прошлую сессию;
-- `fork` делает новую ветку обсуждения от прошлой сессии.
-
-Когда использовать:
-
-- хочешь восстановить контекст;
-- хочешь попробовать альтернативное решение без потери старой ветки мыслей.
+- you want to restore context;
+- you want an alternative solution path without destroying the original one.
 
 ### `codex login status`
 
-Что это:
-
-- быстрый health check по авторизации.
+- quick auth health check.
 
 ### `codex completion`
 
-Что это:
+- generate shell completion scripts.
 
-- генерация completion scripts.
-
-Пример:
+Example:
 
 ```bash
 codex completion bash
 codex completion zsh
 ```
 
-## Самые полезные глобальные флаги
+## Useful global flags
 
 ### `-C, --cd <DIR>`
 
-- Меняет рабочий корень агента.
-- Используй, если repo не совпадает с текущей директорией.
+- set the working root explicitly;
+- use it when the repo is not your current directory.
 
 ### `-m, --model <MODEL>`
 
-- Явно выбирает модель.
-- Используй для точного контроля latency/качества.
+- pin the model explicitly;
+- use it when repeatability matters.
 
 ### `-p, --profile <NAME>`
 
-- Загружает профиль из `config.toml`.
-- Используй для повторяемых режимов типа `review`, `fast`, `danger`.
+- load a profile from `config.toml`;
+- use it for repeatable modes such as `review`, `fast`, or `deep`.
 
 ### `-s, --sandbox <MODE>`
 
-- Управляет доступом к файловой системе.
-- Базовые значения: `read-only`, `workspace-write`, `danger-full-access`.
+- control filesystem access;
+- common modes: `read-only`, `workspace-write`, `danger-full-access`.
 
 ### `-a, --ask-for-approval <POLICY>`
 
-- Управляет подтверждением shell-команд.
-- Для интерактива обычно разумен `on-request`.
+- control command confirmation behavior;
+- `on-request` is usually a good default for interactive use.
 
 ### `--search`
 
-- Включает web search tool.
-- Используй только когда реально нужны свежие данные.
+- enable web search;
+- use it only when the task truly needs fresh external facts.
 
 ### `--full-auto`
 
-- Ускоренный автоматический режим.
-- Используй только в доверенном репозитории и с понятной задачей.
+- low-friction automatic mode;
+- use it only in a trusted repo with a narrow, well-defined task.
 
-## Рекомендуемый стартовый сценарий
+## Recommended first run
 
 ```bash
 codex -C /path/to/repo
 ```
 
-Дальше в первом сообщении:
+Then start with:
 
 ```text
-Сначала изучи структуру проекта. Потом найди точку входа, тесты и команду запуска. Ничего не меняй без краткого плана.
+Study the repository first. Find the entrypoint, tests, run commands, and main risks. Do not change anything before a short plan.
 ```
 
-## Источники
+## Sources
 
 - https://developers.openai.com/codex/cli
-- локальная справка `codex --help`, `codex exec --help`, `codex review --help`
+- local `codex --help`, `codex exec --help`, `codex review --help`

@@ -1,136 +1,115 @@
-# 11. Как правильно писать промпты для Codex
+# 11. Prompting Codex well
 
-## Базовая формула хорошего запроса
+## A good prompt usually contains
 
-Хороший prompt обычно содержит:
+- goal;
+- context;
+- constraints;
+- done criteria;
+- validation command;
+- desired output format.
 
-- цель;
-- контекст;
-- ограничения;
-- критерий завершения;
-- команду валидации;
-- формат ответа.
-
-Шаблон:
+Template:
 
 ```text
-Контекст: ...
-Цель: ...
-Ограничения: ...
-Проверь через: ...
-На выходе дай: ...
+Context: ...
+Goal: ...
+Constraints: ...
+Validate with: ...
+Return: ...
 ```
 
-## Для нового проекта
+## For a new project
 
-Используй такой тип запроса:
+Use a prompt like:
 
 ```text
-Нужен новый проект. Предложи минимальную структуру каталогов и стек под эти требования: ...
-Сначала покажи план и skeleton файлов. После подтверждения создай код. В конце дай команды запуска и smoke-check.
+I need a new project with these requirements: ...
+First propose the architecture, directory structure, and minimum MVP. After approval, generate the code. End with run commands and a smoke test.
 ```
 
-Почему это правильно:
+Why it works:
 
-- сначала проектируется структура;
-- не генерируется лишний код;
-- критерий завершения понятен.
+- structure comes before code;
+- scope stays controlled;
+- success is visible.
 
-Когда не использовать:
-
-- если проект уже существует.
-
-## Для существующего проекта
+## For an existing project
 
 ```text
-Сначала изучи репозиторий и найди действующие соглашения. Потом исправь только проблему X, не меняя public API и не затрагивая unrelated файлы. После этого прогони релевантные тесты и перечисли риски.
+First inspect the repository and identify the current conventions. Then change only problem X, without changing the public API or touching unrelated files. Run the relevant tests and list the remaining risks.
 ```
 
-Почему это работает:
+Why it works:
 
-- заставляет Codex уважать текущий codebase;
-- ограничивает область правок;
-- вшивает validation в задачу.
+- Codex respects the existing codebase;
+- patch scope stays narrow;
+- validation is built into the task.
 
-## Для точечного багфикса
+## For a focused bug fix
 
 ```text
-Воспроизведи баг из этого traceback: ...
-Найди root cause.
-Исправь минимальным patch.
-Если уместно, добавь regression test.
-Прогони только затронутые проверки и кратко объясни, почему баг возник.
+Reproduce the bug from this traceback: ...
+Find the root cause.
+Fix it with the smallest useful patch.
+Add a regression test if appropriate.
+Run only the relevant checks and explain why the bug happened.
 ```
 
-## Для безопасного рефакторинга
+## For safe refactoring
 
 ```text
-Сделай рефактор только в файле X.
-Цель: улучшить читаемость и убрать дублирование.
-Поведение менять нельзя.
-Public API менять нельзя.
-После изменений сравни diff по смыслу и прогони существующие тесты для этого модуля.
+Refactor only file X.
+Goal: improve readability and remove duplication.
+Behavior must not change.
+Public API must not change.
+After the edits, run the existing tests for this module.
 ```
 
-## Для анализа чужого репозитория
+## For repository analysis
 
 ```text
-Изучи репозиторий как новый инженер в команде.
-Найди entrypoint, основные модули, команды запуска, тесты и архитектурные риски.
-Сначала только анализ, без правок.
-На выходе дай карту проекта и список мест, которые стоит проверить глубже.
+Study this repository like a new engineer joining the team.
+Find the entrypoint, major modules, run commands, tests, and architecture risks.
+Analysis only, no edits.
 ```
 
-## Для генерации документации
+## For documentation generation
 
 ```text
-Проанализируй текущий проект и создай техническую документацию для разработчиков.
-Не выдумывай команды и зависимости: сначала найди их в repo.
-Если данные не подтверждены кодом, пометь это как предположение.
+Create developer-facing documentation for the current repository.
+Do not invent commands or dependencies: find them in the repo first.
+If something is not confirmed by code or config, mark it as an assumption.
 ```
 
-## Что писать явно
+## State these things explicitly
 
-- можно ли менять тесты;
-- можно ли добавлять зависимости;
-- можно ли переименовывать файлы;
-- нужна ли обратная совместимость;
-- что делать, если задача упирается в ambiguity.
+- whether tests may change;
+- whether dependencies may be added;
+- whether files may be renamed;
+- whether backward compatibility is required;
+- what to do if ambiguity remains.
 
-## Что не писать
+## Avoid prompts like these
 
-- “исправь все”;
-- “сделай красиво”;
-- “рефакторни проект полностью” без критериев;
-- “используй лучшие практики” без определения, какие именно.
+- “fix everything”
+- “make it better”
+- “refactor the whole project” with no constraints
+- “use best practices” without defining which ones
 
-## Антишаблоны промптов
+## Practice
 
-Плохой:
+- one prompt, one main objective;
+- split large work into stages;
+- ask for a plan first when safety matters;
+- allow a minimal patch explicitly when speed matters.
 
-```text
-Сделай backend лучше.
-```
-
-Хороший:
-
-```text
-Сделай только backend/auth/session.py более читаемым без изменения поведения. Убери дублирование, не трогай API и прогони auth-тесты.
-```
-
-## Практика
-
-- Один prompt — одна цель.
-- Если задача крупная, разбивай на этапы.
-- Если важна безопасность, проси сначала план.
-- Если важна скорость, явно разрешай минимальный patch.
-
-## См. также
+## See also
 
 - [playbooks.md](./playbooks.md)
 - [examples/prompts.md](./examples/prompts.md)
 
-## Источники
+## Sources
 
 - https://developers.openai.com/cookbook/examples/gpt-5/codex_prompting_guide
 - https://developers.openai.com/cookbook/examples/codex/code_modernization

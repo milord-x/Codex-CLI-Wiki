@@ -1,15 +1,15 @@
-# 02. Вход, авторизация и тарифы
+# 02. Auth and plans
 
-## Два базовых сценария
+## Two main scenarios
 
-### Вход через ChatGPT account
+### Sign in with a ChatGPT account
 
-Что это:
+What it is:
 
-- Авторизация через аккаунт ChatGPT.
-- Рекомендуемый путь для ручной интерактивной работы.
+- interactive sign-in with your ChatGPT account;
+- the recommended path for manual day-to-day use.
 
-Синтаксис:
+Syntax:
 
 ```bash
 codex login
@@ -17,136 +17,114 @@ codex login status
 codex logout
 ```
 
-Что делает:
+What it does:
 
-- открывает flow входа;
-- сохраняет локальные учетные данные;
-- позволяет использовать Codex в рамках поддерживаемого ChatGPT-плана.
+- opens the login flow;
+- stores local credentials;
+- lets you use Codex under a supported ChatGPT plan.
 
-Когда использовать:
+Use when:
 
-- локальная ручная работа;
-- desktop/dev laptop;
-- личный или командный ChatGPT plan.
+- you work interactively;
+- you use your own laptop or workstation;
+- you do not want to manage API keys manually.
 
-Когда не использовать:
+Do not use when:
 
-- headless CI;
-- среды, где браузерный login недоступен;
-- сервисные пайплайны с отдельным billing.
+- you need headless CI;
+- a browser login is not possible;
+- billing must be isolated per service.
 
-Пример:
+Typical errors:
 
-```bash
-codex login
-codex login status
-```
+- signed in with the wrong account;
+- browser flow completed but terminal auth did not update;
+- blocked SSO or device-flow issues.
 
-Типичные ошибки:
+Security:
 
-- login прошел в браузере, но терминал остался неавторизованным;
-- вход выполнен не под тем аккаунтом;
-- блокировка корпоративным SSO или device flow.
+- keep work and personal accounts separate;
+- avoid shared OS users;
+- verify status before demos or screen sharing.
 
-Безопасность:
+### Sign in with an API key
 
-- отделяй личный и рабочий аккаунты;
-- не логинься под общим системным пользователем;
-- перед демонстрацией экрана проверь `codex login status`.
+What it is:
 
-### Вход через API key
+- authentication via OpenAI API key;
+- better for automation and explicit billing control.
 
-Что это:
-
-- Авторизация через OpenAI API key.
-- Подходит для автоматизации, CI и контролируемого биллинга.
-
-Локально проверенный синтаксис для `codex-cli 0.115.0`:
+Locally verified syntax for `codex-cli 0.115.0`:
 
 ```bash
 printenv OPENAI_API_KEY | codex login --with-api-key
 ```
 
-Официальные примеры также могут показывать:
+Official examples may also show:
 
 ```bash
 codex login --api-key "$OPENAI_API_KEY"
 ```
 
-Что делает:
+Use when:
 
-- привязывает локальный CLI к API-ключу;
-- позволяет работать без браузерного ChatGPT sign-in.
+- you need CI/CD;
+- you want service-level billing and quota control;
+- browser auth is not appropriate.
 
-Когда использовать:
+Do not use when:
 
-- CI/CD;
-- отдельный billing/accounting;
-- сервисные или временные окружения.
+- the key would end up in shell history;
+- ChatGPT sign-in already covers the use case;
+- you cannot securely store the key.
 
-Когда не использовать:
+Typical errors:
 
-- если ключ придется вводить в открытую в shell history;
-- если пользовательская подписка ChatGPT уже покрывает сценарий;
-- если ты не контролируешь окружение, где будет храниться ключ.
+- `OPENAI_API_KEY` is not exported;
+- you are using syntax from a different CLI version;
+- invalid or exhausted key.
 
-Типичные ошибки:
+Security:
 
-- `OPENAI_API_KEY` не экспортирован;
-- используется устаревший синтаксис для другой версии CLI;
-- ключ имеет неверный scope или исчерпан quota.
-
-Безопасность:
-
-- не вставляй ключ в явном виде в историю shell;
-- предпочитай `stdin` или секреты CI;
-- регулярно ротируй ключ;
-- не храни ключ в `AGENTS.md`, `SKILL.md`, README и коммитах.
+- prefer `stdin`, CI secrets, or environment injection;
+- never commit keys to markdown, configs, `AGENTS.md`, or skills;
+- rotate keys regularly.
 
 ## Device auth
 
-Локальная справка показывает флаг:
+Local help also exposes:
 
 ```bash
 codex login --device-auth
 ```
 
-Когда использовать:
+Use when:
 
-- если обычный браузерный flow не проходит;
-- если работаешь на удаленной машине.
-
-Когда не использовать:
-
-- если обычный `codex login` уже работает.
+- a browser flow is blocked;
+- you are on a remote machine.
 
 ## ChatGPT plan vs API key
 
-Используй ChatGPT plan, если:
+Use ChatGPT sign-in when:
 
-- работаешь руками в CLI;
-- нужна минимальная настройка;
-- не хочешь управлять ключами и quotas вручную.
+- the work is interactive;
+- setup speed matters;
+- you do not need service-level key management.
 
-Используй API key, если:
+Use API key auth when:
 
-- нужен CI;
-- нужна управляемая автоматизация;
-- нужен отдельный billing per team/service.
+- you need CI;
+- billing separation matters;
+- automation must be controlled and reproducible.
 
-## Минимальная проверка авторизации
+## Minimum verification
 
 ```bash
 codex login status
 ```
 
-Ожидаемый результат:
-
-- CLI показывает, что авторизация есть;
-- дальше можно запускать `codex` или `codex exec`.
-
-## Источники
+## Sources
 
 - https://developers.openai.com/codex/auth
 - https://help.openai.com/en/articles/11369540-codex-in-chatgpt
-- локальная справка `codex login --help`
+- local `codex login --help`

@@ -1,120 +1,116 @@
-# 04. Интерактивный workflow
+# 04. Interactive workflow
 
-## Когда нужен интерактивный режим
+## When interactive mode is the right choice
 
-Используй `codex`, если задача:
+Use `codex` when the task:
 
-- не полностью определена;
-- требует исследования;
-- может разойтись на несколько вариантов;
-- требует промежуточных подтверждений.
+- is not fully specified;
+- requires repo exploration;
+- may split into multiple options;
+- benefits from human confirmation between steps.
 
-## Базовый реальный workflow
+## Practical workflow
 
-### 1. Зафиксируй корень работы
+### 1. Anchor the working directory
 
 ```bash
 codex -C /path/to/repo
 ```
 
-Не запускай Codex из случайной директории, если работаешь с конкретным репозиторием.
+Do not start from a random directory if the task is repo-specific.
 
-### 2. Дай стартовую рамку
+### 2. Set the initial frame
 
-Хороший первый промпт:
-
-```text
-Изучи проект. Найди entrypoint, тесты, команду сборки и основные риски. Сначала краткий план, потом жди подтверждения на правки.
-```
-
-### 3. Уточни режим доступа
-
-Если задача рискованная, сразу задай policy:
+Good opening prompt:
 
 ```text
-Работай только в пределах текущего репозитория. Никаких destructive git-команд. Перед изменениями покажи короткий план.
+Study the project. Find the entrypoint, tests, build/run commands, and main risks. First give a short plan, then wait for confirmation before editing files.
 ```
 
-### 4. Делай работу по слоям
+### 3. State your safety boundaries
 
-Надежный порядок:
-
-1. исследование;
-2. подтверждение понимания;
-3. минимальный patch;
-4. targeted validation;
-5. итоговый diff review.
-
-### 5. Заверши верификацией
-
-Хороший финальный запрос:
+For higher-risk work:
 
 ```text
-Прогони релевантные проверки, затем коротко перечисли, что изменено, что проверено и какие риски остались.
+Work only inside this repository. No destructive git commands. Before any edits, show a short plan.
 ```
 
-## Полезные slash-команды
+### 4. Work in layers
+
+Reliable order:
+
+1. investigate;
+2. confirm understanding;
+3. make the smallest useful patch;
+4. run targeted validation;
+5. review the final diff.
+
+### 5. End with validation
+
+Good closing prompt:
+
+```text
+Run the relevant checks, then summarize what changed, what was verified, and what risks remain.
+```
+
+## Useful slash commands
 
 ### `/help`
 
-- Показать справку по slash-командам.
+- show slash command help.
 
 ### `/status`
 
-- Быстрый статус текущей сессии и конфигурации.
+- show current session and config status.
 
 ### `/model`
 
-- Сменить или проверить модель без перезапуска сессии.
+- inspect or switch the current model.
 
 ### `/approvals`
 
-- Переключить approval policy внутри сессии.
+- change approval behavior inside the session.
 
 ### `/search`
 
-- Переключить web search.
+- toggle web search.
 
 ### `/mcp`
 
-- Управление MCP server integrations из сессии.
+- manage MCP integrations inside the session.
 
 ### `/compact`
 
-- Сжать контекст, если сессия стала длинной.
+- compress the current context.
 
-Когда использовать:
+Use when:
 
-- долгие сессии;
-- рост контекста;
-- смена задачи без потери текущего потока.
-
-Когда не использовать:
-
-- если важный контекст еще не зафиксирован в файлах или сообщении.
+- the session is long;
+- context is getting noisy;
+- you want to keep momentum without restarting.
 
 ### `/clear`
 
-- Очистить историю видимого диалога.
+- clear visible session history.
 
-Используй только если понимаешь, что теряешь локальный conversational context.
+Use only when you understand the context tradeoff.
 
-## Практика, которая экономит больше всего времени
+## Practices that save time
 
-- Начинай широко, но с четкими границами.
-- Проси сначала исследование, потом изменения.
-- Фиксируй non-goals явно.
-- Проси запускать только конкретные проверки, а не весь мир.
-- После удачного этапа делай `git diff` и checkpoint commit.
+- start broad, but with hard boundaries;
+- ask for investigation before modification;
+- write non-goals explicitly;
+- ask for targeted tests, not everything;
+- use `git diff` and a checkpoint commit after a successful stage.
 
-## Типичные ошибки
+## Typical mistakes
 
-- Сразу просить “исправь все”.
-- Не указывать корень репозитория.
-- Не оговаривать, можно ли менять тесты.
-- Давать общий промпт без критерия завершения.
+- asking to “fix everything”;
+- not setting the repo root;
+- not stating whether tests may be changed;
+- giving a goal without a done criterion.
 
-## Источники
+## Sources
 
 - https://developers.openai.com/codex/cli/features
 - https://developers.openai.com/codex/cli/slash-commands

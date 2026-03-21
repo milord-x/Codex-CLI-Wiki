@@ -1,137 +1,138 @@
-# 13. Частые ошибки и анти-паттерны
+# 13. Common mistakes and anti-patterns
 
-## 1. Слишком широкий запрос
+## 1. Overly broad requests
 
-Плохо:
+Bad:
 
 ```text
-Исправь проект.
+Fix the project.
 ```
 
-Почему плохо:
+Why it fails:
 
-- Codex сам угадывает scope;
-- diff разрастается;
-- review становится дорогим.
+- Codex has to guess the scope;
+- the diff grows too large;
+- review becomes expensive.
 
-Что делать:
+What to do instead:
 
-- ограничивать модуль, цель и критерий завершения.
+- constrain the module, goal, and done criteria.
 
-## 2. Опасный режим по умолчанию
+## 2. Dangerous defaults
 
-Плохо:
+Bad:
 
-- запускать `danger-full-access` или `never` без необходимости.
+- normalizing `danger-full-access` or `never`.
 
-Почему плохо:
+Why it fails:
 
-- это снимает полезные предохранители.
+- you remove useful safety rails.
 
-Что делать:
+Better:
 
-- по умолчанию держать `workspace-write` + `on-request`.
+- default to `workspace-write` and `on-request`.
 
-## 3. Игнорировать текущие conventions репозитория
+## 3. Ignoring current repository conventions
 
-Плохо:
+Bad:
 
-- заставлять Codex писать новый стиль поверх существующего.
+- forcing a brand-new style onto an existing codebase.
 
-Что делать:
+Better:
 
-- сначала обзор структуры и соглашений;
-- только потом точечные правки.
+- inspect current conventions first;
+- patch second.
 
-## 4. Не проверять `codex --help`
+## 4. Not checking local `--help`
 
-Почему это важно:
+Why it matters:
 
-- CLI меняется;
-- часть официальных или старых примеров может расходиться с твоей установленной версией.
+- CLI behavior changes over time;
+- some official or older examples may not match your installed version.
 
-Что делать:
+Better:
 
-- при сомнении сначала `codex <command> --help`.
+- when in doubt, run `codex <command> --help`.
 
-## 5. Секреты в prompt, `AGENTS.md` или wiki
+## 5. Secrets in prompts or docs
 
-Плохо:
+Bad:
 
-- вставлять API keys, bearer tokens, приватные URL, пароли.
+- API keys, bearer tokens, private URLs, passwords in prompts, `AGENTS.md`, or wiki files.
 
-Что делать:
+Better:
 
-- использовать env vars и secret storage.
+- use env vars and secret management.
 
-## 6. Отсутствие checkpoint перед большой задачей
+## 6. No checkpoint before large work
 
-Плохо:
+Bad:
 
-- после неудачной генерации нечего сравнить и сложно откатиться.
+- rollback becomes painful;
+- useful comparison points disappear.
 
-Что делать:
+Better:
 
-- branch или stash перед крупной работой.
+- create a branch or stash first.
 
-## 7. Отсутствие targeted validation
+## 7. No targeted validation
 
-Плохо:
+Bad:
 
-- считать задачу завершенной после генерации кода.
+- treating generated code as finished without tests or review.
 
-Что делать:
+Better:
 
-- запускать тесты и review только по затронутой области.
+- run tests and review the changed area specifically.
 
-## 8. Делать `AGENTS.md` свалкой
+## 8. Turning `AGENTS.md` into a dump
 
-Плохо:
+Bad:
 
-- огромный файл без иерархии;
-- дублирование README;
-- противоречивые правила.
+- giant file;
+- duplicate README content;
+- contradictory rules.
 
-Что делать:
+Better:
 
-- держать только стабильные проектные нормы.
+- keep only durable, normative project policy there.
 
-## 9. Делать skill слишком общим
+## 9. Making a skill too generic
 
-Плохо:
+Bad:
 
-- skill на тему “умеет все”.
+- one skill that “does everything”.
 
-Что делать:
+Better:
 
-- один skill = один узкий повторяемый workflow.
+- one skill = one narrow repeatable workflow.
 
-## 10. Просить рефактор, когда нужен багфикс
+## 10. Asking for refactoring when a bug fix is needed
 
-Плохо:
+Bad:
 
-- исправление тонет в лишних изменениях.
+- the real fix disappears inside unrelated changes.
 
-Что делать:
+Better:
 
-- сначала fix, потом отдельный рефактор.
+- fix first, refactor later.
 
-## 11. Использовать web search без необходимости
+## 11. Using web search without a reason
 
-Плохо:
+Bad:
 
-- смешиваются свежие внешние сведения и локальная правда проекта.
+- mixing repo truth with irrelevant external noise.
 
-Что делать:
+Better:
 
-- включать `--search` только когда нужен актуальный внешний факт.
+- turn on `--search` only for time-sensitive external facts.
 
-## 12. Принять красивое объяснение за доказательство
+## 12. Treating a good explanation as proof
 
-Плохо:
+Bad:
 
-- rationale выглядит убедительно, но ничем не проверено.
+- the rationale sounds convincing, but nothing was verified.
 
-Что делать:
+Better:
 
-- требовать воспроизведение, diff и валидацию.
+- demand reproduction, diff review, and validation.

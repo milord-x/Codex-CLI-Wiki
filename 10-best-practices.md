@@ -1,36 +1,36 @@
-# 10. Best Practices
+# 10. Best practices
 
-## 1. Начинай с исследования, а не с генерации
+## 1. Start with investigation, not generation
 
-Хороший старт:
-
-```text
-Изучи структуру проекта. Найди entrypoint, тесты, команды запуска и риски. Не меняй код до краткого плана.
-```
-
-Плохой старт:
+Good opening prompt:
 
 ```text
-Сделай проект лучше.
+Study the repository first. Find the entrypoint, tests, run commands, and major risks. Do not change code before a short plan.
 ```
 
-## 2. Всегда задавай критерий завершения
-
-Укажи:
-
-- что считается готовым;
-- какие проверки нужно прогнать;
-- что нельзя менять.
-
-Пример:
+Bad opening prompt:
 
 ```text
-Исправь только падение `test_auth.py`. Не меняй public API. После правки прогони только релевантные тесты и дай diff summary.
+Make the project better.
 ```
 
-## 3. Делай git-checkpoint перед крупной задачей
+## 2. Always define done
 
-Практика:
+State:
+
+- what “done” means;
+- which checks must run;
+- what must not change.
+
+Example:
+
+```text
+Fix only `test_auth.py`. Do not change the public API. Run only the relevant tests and summarize the diff.
+```
+
+## 3. Create a git checkpoint before larger tasks
+
+Practical pattern:
 
 ```bash
 git status
@@ -38,46 +38,46 @@ git switch -c codex/<topic>
 git stash push -u -m "pre-codex-checkpoint"
 ```
 
-Это делает восстановление после неудачной генерации дешевым.
+This makes recovery cheap if a generation goes wrong.
 
-## 4. Для новых проектов и для существующих workflow разный
+## 4. New projects and existing projects need different workflows
 
-### Новый проект
+### New project
 
-- сначала попроси структуру;
-- затем договорись о стекe и ограничениях;
-- потом генерируй по модулям;
-- в конце запускай локальную валидацию.
+- ask for structure first;
+- define stack and constraints;
+- generate module by module;
+- validate locally at the end.
 
-### Существующий проект
+### Existing project
 
-- сначала обзор репозитория;
-- затем найти текущие conventions;
-- потом точечная правка;
-- затем review и regression checks.
+- inspect first;
+- find existing conventions;
+- make the smallest useful patch;
+- review and run regression checks.
 
-## 5. Предпочитай маленькие patch-и
+## 5. Prefer smaller patches
 
-Чем уже задача, тем:
+Smaller tasks mean:
 
-- меньше регрессий;
-- проще review;
-- легче откат;
-- быстрее верификация.
+- lower regression risk;
+- easier review;
+- easier rollback;
+- faster validation.
 
-## 6. Пиши правила один раз
+## 6. Write stable rules once
 
-Используй:
+Use:
 
-- `AGENTS.md` для проектных правил;
-- skills для повторяемых узких workflows;
-- `config.toml` для постоянных CLI defaults.
+- `AGENTS.md` for repository rules;
+- skills for narrow repeatable workflows;
+- `config.toml` for persistent CLI defaults.
 
-Не держи один и тот же policy одновременно в prompt, wiki и трех разных файлах.
+Do not repeat the same policy in prompts, docs, and three different files.
 
-## 7. Review после edit — обязательно
+## 7. Review after editing
 
-Минимум:
+Minimum habit:
 
 ```bash
 git diff --stat
@@ -85,38 +85,38 @@ git diff
 codex review --uncommitted
 ```
 
-## 8. Validation важнее красивого explanation
+## 8. Validation matters more than explanation
 
-Проверка должна быть:
+Good validation is:
 
 - targeted;
-- воспроизводимой;
-- привязанной к измененному коду.
+- reproducible;
+- tied to the changed area.
 
-Если изменения без валидации, считай работу незавершенной.
+If a change has no validation, treat it as incomplete.
 
-## 9. Не включай опасные режимы без осознанной причины
+## 9. Keep dangerous modes exceptional
 
-По умолчанию разумно:
+Sane defaults:
 
 - `workspace-write`
 - `on-request`
 
-Не делай default из:
+Do not normalize:
 
 - `danger-full-access`
 - `never`
-- глобальных write-access за пределами repo
+- broad write access outside the repo
 
-## 10. Для долгих сессий periodically compact context
+## 10. Compact long sessions
 
-Если сессия длинная:
+If the session grows long:
 
-- фиксируй решения в файлах;
-- используй `/compact`;
-- открывай новую ветку через `fork`, если задача меняет направление.
+- move decisions into files;
+- use `/compact`;
+- use `fork` when the direction changes sharply.
 
-## Источники
+## Sources
 
 - https://developers.openai.com/codex/learn/best-practices
 - https://developers.openai.com/codex/cli/features

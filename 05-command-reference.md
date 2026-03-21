@@ -1,117 +1,103 @@
-# 05. Command Reference
+# 05. Command reference
 
-Этот файл не заменяет `codex --help`, а дополняет его практическими заметками. Для спорных деталей сначала смотри локальную справку своей версии CLI.
+This file complements `codex --help`; it does not replace it. When official docs and your installed CLI disagree, prefer local help for your current version.
 
-## Общие флаги верхнего уровня
+## Top-level flags
 
-| Флаг | Что это | Когда использовать | Когда не использовать | Пример | Ошибки и безопасность |
+| Flag | What it is | Use when | Do not use when | Example | Errors and safety |
 |---|---|---|---|---|---|
-| `-C, --cd <DIR>` | меняет рабочий корень | repo не в текущей папке | если уже стоишь в нужном корне | `codex -C ~/src/app` | неверный путь = работа не там |
-| `-m, --model <MODEL>` | выбор модели | хочешь контролировать latency/качество | если модель уже зафиксирована профилем | `codex -m gpt-5.4` | неподдерживаемая модель в текущем аккаунте |
-| `-p, --profile <NAME>` | профиль из `config.toml` | повторяемый режим | одноразовые ad hoc задачи | `codex -p review` | профиль не найден |
-| `-c, --config key=value` | точечный override конфига | быстрый one-off override | если это постоянная настройка, лучше в профиль | `codex -c model_reasoning_effort=\"high\"` | TOML quoting и типы |
-| `-s, --sandbox <MODE>` | sandbox mode | нужен явный filesystem policy | если не понимаешь риски | `codex -s workspace-write` | `danger-full-access` опасен |
-| `-a, --ask-for-approval <POLICY>` | approval policy | регулируешь shell execution | если не понимаешь последствия автоматизации | `codex -a on-request` | `never` опасен в живом репо |
-| `--full-auto` | alias для low-friction auto execution | понятная задача в доверенном repo | крупный рефактор, prod repo, unknown codebase | `codex --full-auto` | все равно проверяй diff |
-| `--dangerously-bypass-approvals-and-sandbox` | полный bypass защиты | только во внешне sandboxed среде | почти всегда | `codex ... --dangerously-bypass-approvals-and-sandbox` | максимальный риск |
-| `--search` | web search tool | нужны свежие данные | задача решается локальным контекстом | `codex --search` | не путай web факты с локальным кодом |
-| `--add-dir <DIR>` | добавляет writable dir | нужен доступ за пределы repo | если можно обойтись корнем repo | `codex --add-dir ../shared` | не расширяй write scope без причины |
-| `--oss` | локальный OSS provider | есть LM Studio/Ollama | нужен официальный hosted model | `codex --oss` | проверь, что локальный сервер поднят |
-| `--local-provider <lmstudio|ollama>` | выбор локального провайдера | провайдеров несколько | если `--oss` не нужен | `codex --oss --local-provider ollama` | неверный provider |
-| `-i, --image <FILE>` | прикрепляет изображения | UI bugs, screenshots, diagrams | если изображение не влияет на задачу | `codex -i screenshot.png` | не прикладывай секретные скриншоты |
+| `-C, --cd <DIR>` | set working root | repo is not the current directory | you are already at the correct root | `codex -C ~/src/app` | wrong path means work happens in the wrong place |
+| `-m, --model <MODEL>` | explicit model selection | you need repeatability or A/B comparison | a profile already pins the model | `codex -m gpt-5.4` | unavailable model for your account |
+| `-p, --profile <NAME>` | profile from `config.toml` | you use repeatable modes | one-off experimentation | `codex -p review` | missing profile |
+| `-c, --config key=value` | direct config override | quick ad hoc overrides | the setting is permanent and should live in a profile | `codex -c model_reasoning_effort=\"high\"` | TOML typing and quoting mistakes |
+| `-s, --sandbox <MODE>` | sandbox mode | you need explicit filesystem policy | you do not understand the risk | `codex -s workspace-write` | `danger-full-access` is dangerous |
+| `-a, --ask-for-approval <POLICY>` | approval policy | you want command confirmation control | you do not understand the automation tradeoff | `codex -a on-request` | `never` is risky in a live repo |
+| `--full-auto` | low-friction automatic execution | task is narrow and repo is trusted | large refactors or unknown repos | `codex --full-auto` | always review the diff |
+| `--dangerously-bypass-approvals-and-sandbox` | full safety bypass | only in an externally sandboxed environment | almost always | `codex ... --dangerously-bypass-approvals-and-sandbox` | maximum risk |
+| `--search` | web search tool | fresh external facts are required | local context is enough | `codex --search` | do not confuse repo truth with web truth |
+| `--add-dir <DIR>` | add extra writable directory | you truly need access outside repo root | repo root is enough | `codex --add-dir ../shared` | avoid widening write scope casually |
+| `--oss` | local OSS model provider | LM Studio or Ollama is available | you want official hosted Codex | `codex --oss` | local model server must be running |
+| `--local-provider <lmstudio|ollama>` | local provider selector | multiple local providers exist | you are not using `--oss` | `codex --oss --local-provider ollama` | wrong provider name |
+| `-i, --image <FILE>` | attach image input | screenshots or UI issues matter | the image does not affect the task | `codex -i screenshot.png` | avoid sensitive screenshots |
 
-## Команды
+## Commands
 
 ### `codex`
 
-- Что это: интерактивная сессия.
-- Синтаксис: `codex [OPTIONS] [PROMPT]`
-- Что делает: запускает TUI/inline-сеанс.
-- Когда использовать: исследование, диалог, итеративная работа.
-- Когда не использовать: CI и batch automation.
-- Пример: `codex -C ~/repo "найди причину flaky test"`
-- Типичные ошибки: запуск вне repo, слишком широкий prompt, неверный sandbox.
-- Безопасность: не включай bypass sandbox без необходимости.
+- What it is: interactive session.
+- Syntax: `codex [OPTIONS] [PROMPT]`
+- What it does: starts the TUI or inline interactive session.
+- Use when: you need dialogue and exploration.
+- Do not use when: CI or strict one-shot automation is the goal.
+- Example: `codex -C ~/repo "find the cause of this flaky test"`
+- Typical mistakes: wrong repo root, vague prompt, wrong sandbox.
+- Safety: do not bypass sandbox casually.
 
 ### `codex exec`
 
-- Что это: non-interactive one-shot execution.
-- Синтаксис: `codex exec [OPTIONS] [PROMPT]`
-- Когда использовать: скрипты, пайплайны, reproducible runs.
-- Когда не использовать: если нужен живой диалог.
-- Пример: `codex exec --json "run tests and summarize failures"`
-- Полезные флаги: `--json`, `--ephemeral`, `--output-last-message`, `--output-schema`, `--skip-git-repo-check`.
-- Ошибки: попытка запускать без git repo при включенной проверке; забытый output contract.
-- Безопасность: для automation фиксируй `-C`, `-m`, sandbox и approval policy явно.
+- What it is: non-interactive execution.
+- Syntax: `codex exec [OPTIONS] [PROMPT]`
+- Use when: scripting, automation, reproducible runs.
+- Do not use when: you need active back-and-forth.
+- Example: `codex exec --json "run tests and summarize failures"`
+- Useful flags: `--json`, `--ephemeral`, `--output-last-message`, `--output-schema`, `--skip-git-repo-check`.
+- Safety: pin `-C`, model, sandbox, and approval behavior explicitly in automation.
 
 ### `codex exec resume`
 
-- Что это: non-interactive продолжение прошлой сессии.
-- Синтаксис: `codex exec resume [SESSION_ID] [PROMPT]`
-- Когда использовать: повторяемый batch-run поверх прошлого контекста.
-- Когда не использовать: если проще стартовать новую чистую задачу.
+- What it is: non-interactive continuation of a previous session.
+- Syntax: `codex exec resume [SESSION_ID] [PROMPT]`
+- Use when: a batch run should reuse earlier context.
 
 ### `codex review`
 
-- Что это: code review по текущим изменениям.
-- Синтаксис: `codex review [--uncommitted|--base <branch>|--commit <sha>] [PROMPT]`
-- Что делает: выдает findings по diff.
-- Когда использовать: self-review до PR или commit.
-- Когда не использовать: если ты хочешь автоисправление, а не review.
-- Пример: `codex review --uncommitted`
-- Типичные ошибки: review не того диапазона diff; отсутствие базовой ветки.
-- Безопасность: review безопаснее, чем auto-edit, и должен быть дефолтом перед merge.
+- What it is: code review over a diff.
+- Syntax: `codex review [--uncommitted|--base <branch>|--commit <sha>] [PROMPT]`
+- What it does: reports findings on the selected changes.
+- Use when: self-review before merge or commit.
+- Do not use when: you expect automatic fixes instead of review.
+- Example: `codex review --uncommitted`
+- Safety: review is safer than auto-editing and should be normal before merge.
 
 ### `codex login`
 
-- Что это: управление входом.
-- Синтаксис: `codex login`, `codex login status`, `codex logout`
-- Полезные флаги: `--with-api-key`, `--device-auth`
-- Когда использовать: при первичной настройке и смене аккаунта.
-- Когда не использовать: в shared shell без контроля секретов.
+- What it is: login management.
+- Syntax: `codex login`, `codex login status`, `codex logout`
+- Useful flags: `--with-api-key`, `--device-auth`
+- Use when: initial setup or account switching.
 
 ### `codex resume`
 
-- Что это: продолжение интерактивной сессии.
-- Синтаксис: `codex resume [SESSION_ID] [PROMPT]`
-- Полезные флаги: `--last`, `--all`
-- Когда использовать: хочешь восстановить контекст и продолжить работу.
-- Когда не использовать: если нужен clean-room start.
+- What it is: continue an interactive session.
+- Syntax: `codex resume [SESSION_ID] [PROMPT]`
+- Useful flags: `--last`, `--all`
 
 ### `codex fork`
 
-- Что это: форк прошлой сессии в новую ветку обсуждения.
-- Синтаксис: `codex fork [SESSION_ID] [PROMPT]`
-- Когда использовать: тест альтернативного решения без потери исходной ветки.
-- Когда не использовать: если достаточно `resume`.
+- What it is: branch a previous session into a new thread of work.
+- Syntax: `codex fork [SESSION_ID] [PROMPT]`
 
 ### `codex apply`
 
-- Что это: применение diff от agent task к локальному working tree.
-- Синтаксис: `codex apply <TASK_ID>`
-- Когда использовать: переносишь diff из облачной/удаленной задачи.
-- Когда не использовать: если не понимаешь происхождение task/diff.
-- Безопасность: сначала смотри `git diff` и целевой repo state.
+- What it is: apply a diff from a Codex task into your local working tree.
+- Syntax: `codex apply <TASK_ID>`
+- Safety: inspect provenance and `git diff` first.
 
 ### `codex completion`
 
-- Что это: генерация shell completions.
-- Синтаксис: `codex completion [bash|zsh|fish|powershell|elvish]`
-- Когда использовать: часто работаешь руками.
-- Когда не использовать: одноразовая сессия или контейнер без shell profile.
+- What it is: shell completion generation.
+- Syntax: `codex completion [bash|zsh|fish|powershell|elvish]`
 
 ### `codex mcp`
 
-- Что это: управление MCP servers.
-- Подкоманды: `list`, `get`, `add`, `remove`, `login`, `logout`
-- Когда использовать: нужны внешние инструменты и интеграции.
-- Когда не использовать: локальный контекст уже достаточен.
+- What it is: manage MCP servers.
+- Subcommands: `list`, `get`, `add`, `remove`, `login`, `logout`
 
-Ключевые формы:
+Key forms:
 
 ```bash
 codex mcp list
-codex mcp add my-tool -- my-command --stdio-arg
+codex mcp add my-tool -- my-command --serve
 codex mcp add docs --url https://example.invalid/mcp
 codex mcp get my-tool
 codex mcp remove my-tool
@@ -119,32 +105,30 @@ codex mcp login my-tool
 codex mcp logout my-tool
 ```
 
-Особенности:
+Important details:
 
-- `mcp add` поддерживает либо `--url`, либо локальную команду после `--`.
-- `--env KEY=VALUE` работает для stdio servers.
-- `--bearer-token-env-var` — для HTTP MCP.
-- `mcp list/get` поддерживают `--json`.
+- `mcp add` accepts either `--url` or a local command after `--`.
+- `--env KEY=VALUE` is for stdio servers.
+- `--bearer-token-env-var` is for HTTP MCP.
+- `list` and `get` support `--json`.
 
-Безопасность:
+Safety:
 
-- MCP server имеет доступ к данным через свой transport.
-- Подключай только доверенные серверы.
-- Токены для MCP держи в env/secrets, не в markdown.
+- only connect trusted MCP servers;
+- keep tokens in env or secrets, not markdown files.
 
 ### `codex sandbox`
 
-- Что это: запуск команд в sandbox, отдельно от основной сессии.
-- Подкоманды: `linux`, `macos`, `windows`
-- Пример: `codex sandbox linux --full-auto make test`
-- Когда использовать: хочешь руками проверить sandbox behavior.
-- Когда не использовать: если достаточно задать sandbox через обычный `codex`.
+- What it is: run commands in Codex-provided sandbox wrappers.
+- Subcommands: `linux`, `macos`, `windows`
+- Example: `codex sandbox linux --full-auto make test`
 
 ### `codex features`
 
-- Что это: управление feature flags.
-- Подкоманды: `list`, `enable`, `disable`
-- Примеры:
+- What it is: feature flag management.
+- Subcommands: `list`, `enable`, `disable`
+
+Examples:
 
 ```bash
 codex features list
@@ -152,41 +136,38 @@ codex features enable unified_exec
 codex features disable unified_exec
 ```
 
-- Когда использовать: controlled rollout или тест beta-функции.
-- Когда не использовать: если не понимаешь, что именно включает feature flag.
+### Rare or experimental commands
 
-### Редкие/экспериментальные команды
-
-| Команда | Назначение | Замечание |
+| Command | Purpose | Note |
 |---|---|---|
-| `codex mcp-server` | запуск Codex как MCP server | специализированный integration use case |
-| `codex app-server` | experimental app tooling | не базовая повседневная команда |
-| `codex debug` | debugging tools | используй только при отладке CLI |
-| `codex cloud` | работа с Codex Cloud tasks | experimental, поведение может меняться |
+| `codex mcp-server` | run Codex as an MCP server | specialized integration use case |
+| `codex app-server` | app-related tooling | not a normal daily command |
+| `codex debug` | debug tooling | use only while debugging the CLI |
+| `codex cloud` | browse Codex Cloud tasks | experimental |
 
 ## Approval policy
 
-Локально видны такие режимы:
+Locally visible policies:
 
 - `untrusted`
 - `on-request`
 - `never`
 - `on-failure` — deprecated
 
-Практика:
+Typical usage:
 
-- interactive: чаще всего `on-request`
-- audit/review: `untrusted` или `read-only`
-- automation in sandbox: иногда `never`
+- interactive work: `on-request`
+- cautious review/audit: `untrusted`
+- sandboxed automation: sometimes `never`
 
 ## Sandbox mode
 
-- `read-only` — исследование без правок
-- `workspace-write` — нормальный ежедневный режим
-- `danger-full-access` — только для хорошо понятной и внешне sandboxed среды
+- `read-only` — explore only
+- `workspace-write` — normal day-to-day mode
+- `danger-full-access` — only for well-understood, externally sandboxed environments
 
-## Источники
+## Sources
 
 - https://developers.openai.com/codex/cli/reference
 - https://developers.openai.com/codex/noninteractive
-- локальная справка по всем подкомандам `codex ... --help`
+- local `codex ... --help`

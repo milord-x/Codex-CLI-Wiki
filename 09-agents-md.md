@@ -1,98 +1,86 @@
 # 09. `AGENTS.md`
 
-## Что это
+## What it is
 
-`AGENTS.md` — локальный файл инструкций для Codex. Он задает устойчивые правила работы в проекте или каталоге.
+`AGENTS.md` is a local instruction file for Codex. It stores durable rules for a project or directory tree.
 
-Типичное содержимое:
+Typical contents:
 
-- архитектурные ограничения;
-- разрешенные и запрещенные команды;
-- стиль правок;
-- правила тестирования;
-- соглашения по коммитам и PR;
-- требования к безопасности.
+- architecture constraints;
+- allowed and forbidden commands;
+- editing rules;
+- test and validation expectations;
+- commit and PR conventions;
+- security boundaries.
 
-## Где размещать
+## Where to place it
 
-Практически полезные уровни:
+Useful levels:
 
-- глобально: `~/.codex/AGENTS.md`
-- в корне репозитория: `<repo>/AGENTS.md`
-- в подкаталогах: `<repo>/subdir/AGENTS.md`
+- global: `~/.codex/AGENTS.md`
+- repository root: `<repo>/AGENTS.md`
+- subdirectory: `<repo>/subdir/AGENTS.md`
 
-## Как применяется
+## How it applies
 
-Главная идея:
+High-level model:
 
-- глобальный `AGENTS.md` действует везде;
-- репозиторный `AGENTS.md` уточняет правила для конкретного repo;
-- вложенный `AGENTS.md` уточняет правила для подпути.
+- the global file applies everywhere;
+- the repo root file adds repo-specific rules;
+- nested files further specialize rules for subdirectories.
 
-Используй вложенные файлы только тогда, когда у подкаталога реально есть отдельные правила.
+Use nested files only when a subdirectory truly needs different rules.
 
-## Когда использовать
+## Use `AGENTS.md` when
 
-- в репозитории есть обязательные workflow rules;
-- есть важные ограничения на правки;
-- проект требует особого способа тестирования или релиза;
-- нужно, чтобы Codex не угадывал политику проекта.
+- the repo has mandatory workflow rules;
+- safety constraints must be explicit;
+- test or release behavior is special;
+- you do not want Codex guessing project policy.
 
-## Когда не использовать
+## Do not use it when
 
-- для разовых инструкций под одну сессию;
-- для секретов, токенов, логинов;
-- для дублирования README целиком;
-- для постоянно меняющихся мелких деталей.
+- the instruction is only for one session;
+- the file would contain secrets;
+- it would duplicate the README in full;
+- the content changes all the time.
 
-## Что писать
+## What to include
 
-Хороший `AGENTS.md` включает:
+A good `AGENTS.md` usually states:
 
-- как найти entrypoint;
-- какие команды запускать для build/test/lint;
-- какие каталоги нельзя трогать;
-- можно ли менять тесты и fixtures;
-- что считать успешной валидацией;
-- как оформлять итоговый ответ и diff summary.
+- how to find the entrypoint;
+- how to run build, test, and lint;
+- which directories must not be touched;
+- whether tests and fixtures may be changed;
+- what successful validation means;
+- what the final answer should contain.
 
-## Что не писать
+## What not to include
 
-- ключи и пароли;
-- длинные обучающие тексты “про все подряд”;
-- противоречащие правила в соседних каталогах;
-- хрупкие инструкции, завязанные на одного человека.
+- keys and passwords;
+- giant training-like explanations;
+- contradictory rules across nearby directories;
+- person-specific tribal knowledge.
 
-## Пример минимального содержания
+## Best practice
 
-```md
-# Agent Instructions
+- keep it short and normative;
+- keep stable project rules there;
+- keep task-specific nuance in the prompt;
+- keep narrow repeatable workflows in skills.
 
-- Работай только в этом репозитории.
-- Не запускай destructive git-команды.
-- Перед правками сначала найди команду тестов.
-- Для Python используй `pytest`, для JS сначала ищи `package.json`.
-- После изменений всегда дай список проверок и остаточных рисков.
-```
+## Security
 
-## Практика
+- do not store secrets;
+- do not normalize dangerous defaults;
+- do not write vague “do anything you want” style rules.
 
-- Держи `AGENTS.md` коротким и нормативным.
-- То, что меняется редко, держи в `AGENTS.md`.
-- То, что меняется часто или относится к одной задаче, пиши в prompt.
-- Доменные узкие workflow выноси в skills.
-
-## Безопасность
-
-- не храни секреты;
-- не описывай dangerous defaults как норму;
-- не давай двусмысленных инструкций типа “делай что угодно”.
-
-## См. также
+## See also
 
 - [08-skills.md](./08-skills.md)
 - [examples/agents.md.example](./examples/agents.md.example)
 
-## Источники
+## Sources
 
 - https://developers.openai.com/codex/guides/agents-md

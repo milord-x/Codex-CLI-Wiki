@@ -1,97 +1,66 @@
-<p align="center">
-  <img src="https://img.shields.io/badge/Status-Stable-success?style=for-the-badge"/>
-  <img src="https://img.shields.io/badge/Version-1.0.0-informational?style=for-the-badge"/>
-  <img src="https://img.shields.io/badge/License-MIT-lightgrey?style=for-the-badge"/>
-  <img src="https://img.shields.io/badge/Built%20for-Codex%20CLI-black?style=for-the-badge"/>
-  <img src="https://img.shields.io/badge/GitHub%20Pages-Active-brightgreen?style=for-the-badge"/>
-</p>
+# Codex CLI wiki
 
-<h1 align="center" style="font-size:60px;">Codex CLI Wiki</h1>
+Independent English edition of the local Codex CLI wiki.
 
-<p align="center">
-<img src="screenshot.png" width="900">
-</p>
+## What this contains
 
-## Codex CLI Wiki
+- structured daily-use documentation for Codex CLI;
+- an offline HTML site with search and section filters;
+- launch command `wiki codex`;
+- examples for prompts, `AGENTS.md`, and skills.
 
-Structured documentation for daily work with Codex CLI, deployed as a searchable web site.
+## Status of sources
 
-**Live site:** https://milord-x.github.io/Codex-CLI-Wiki/
+- Primary source of truth: official OpenAI Codex documentation.
+- Local verification: `codex --help`, `codex <command> --help`, `codex --version`.
+- Locally verified version on this machine: `codex-cli 0.115.0`.
 
-- **RU:** https://milord-x.github.io/Codex-CLI-Wiki/#lang=ru
-- **EN:** https://milord-x.github.io/Codex-CLI-Wiki/#lang=en
+## Wiki map
 
-## What's inside
-
-- Structured Codex CLI documentation in Russian
-- Full English translation in `en/`
-- Interactive HTML site with search by keywords and sections
-- Examples of prompts, `AGENTS.md`, and skills
-- Ready-to-use workflows and playbooks
-
-## Repository structure
-
-```
-/
-├── *.md              # Russian documentation (main)
-├── en/               # English translation
-├── examples/          # Prompts, AGENTS.md, skills
-├── tools/            # Site generator
-├── .github/workflows/ # GitHub Pages deployment
-├── LICENSE           # MIT license
-└── README.md         # This file
-```
-
-## Quick navigation
-
-| # | File | Description |
-|---|------|-------------|
-| 01 | [01-installation.md](./01-installation.md) | Installation |
-| 02 | [02-auth-and-plans.md](./02-auth-and-plans.md) | Authentication |
-| 03 | [03-basic-commands.md](./03-basic-commands.md) | Basic commands |
-| 04 | [04-interactive-workflow.md](./04-interactive-workflow.md) | Interactive workflow |
-| 05 | [05-command-reference.md](./05-command-reference.md) | Command reference |
-| 06 | [06-config.md](./06-config.md) | Configuration |
-| 07 | [07-models-and-modes.md](./07-models-and-modes.md) | Models and modes |
-| 08 | [08-skills.md](./08-skills.md) | Skills |
-| 09 | [09-agents-md.md](./09-agents-md.md) | AGENTS.md |
-| 10 | [10-best-practices.md](./10-best-practices.md) | Best practices |
-| 11 | [11-prompting.md](./11-prompting.md) | Prompting |
-| 12 | [12-debugging-recovery.md](./12-debugging-recovery.md) | Debugging |
-| 13 | [13-anti-patterns.md](./13-anti-patterns.md) | Anti-patterns |
-| - | [cheatsheet.md](./cheatsheet.md) | Quick reference |
-| - | [playbooks.md](./playbooks.md) | Workflows |
-| - | [INDEX.md](./INDEX.md) | Full index |
+- [01-installation.md](./01-installation.md) — installation and first verification.
+- [02-auth-and-plans.md](./02-auth-and-plans.md) — ChatGPT sign-in and API key auth.
+- [03-basic-commands.md](./03-basic-commands.md) — minimum command set for day one.
+- [04-interactive-workflow.md](./04-interactive-workflow.md) — practical interactive workflow.
+- [05-command-reference.md](./05-command-reference.md) — command and flag reference.
+- [06-config.md](./06-config.md) — `~/.codex/config.toml`, profiles, and project overrides.
+- [07-models-and-modes.md](./07-models-and-modes.md) — models, sandbox, approvals, `--oss`.
+- [08-skills.md](./08-skills.md) — skills, `SKILL.md`, and examples.
+- [09-agents-md.md](./09-agents-md.md) — how `AGENTS.md` works.
+- [10-best-practices.md](./10-best-practices.md) — operational best practices.
+- [11-prompting.md](./11-prompting.md) — how to prompt Codex well.
+- [12-debugging-recovery.md](./12-debugging-recovery.md) — safe bug fixing, validation, recovery.
+- [13-anti-patterns.md](./13-anti-patterns.md) — common mistakes and anti-patterns.
+- [cheatsheet.md](./cheatsheet.md) — quick commands and recipes.
+- [playbooks.md](./playbooks.md) — ready-made workflows.
+- [examples/prompts.md](./examples/prompts.md) — prompt examples.
+- [examples/agents.md.example](./examples/agents.md.example) — `AGENTS.md` example.
+- [examples/skills/](./examples/skills/) — skill examples.
+- [INDEX.md](./INDEX.md) — compact file index.
 
 ## How to use this wiki
 
-1. **New to Codex CLI?** Start with `01-installation.md` and `02-auth-and-plans.md`
-2. **Already installed?** Read `03-basic-commands.md`, `04-interactive-workflow.md`, `05-command-reference.md`, `06-config.md`
-3. **Daily work:** Keep `cheatsheet.md` nearby
-4. **Project tasks:** Use `playbooks.md` and `examples/prompts.md`
-5. **Before risky runs:** Check `05-command-reference.md` and `07-models-and-modes.md`
+1. If you are new to Codex CLI, start with `01` and `02`.
+2. If Codex is already installed, read `03`, `04`, `05`, and `06`.
+3. Keep [cheatsheet.md](./cheatsheet.md) nearby for day-to-day work.
+4. Use [playbooks.md](./playbooks.md) and [examples/prompts.md](./examples/prompts.md) for real tasks.
+5. Before risky runs, review [05-command-reference.md](./05-command-reference.md) and [07-models-and-modes.md](./07-models-and-modes.md).
 
-## Building the site locally
+## HTML version
 
-```bash
-git clone https://github.com/milord-x/Codex-CLI-Wiki.git
-cd Codex-CLI-Wiki
-python3 tools/build_site.py
-```
+- Local HTML build output: `site/index.html`
+- Open from terminal: `wiki codex`
+- Rebuild only: `wiki codex --build-only`
+- Print HTML path only: `wiki codex --print-path`
 
-Open `site/index.html` in your browser.
+## Version notes
 
-## Independence and trademarks
-
-- This is an independent unofficial project
-- Not affiliated with, endorsed by, or sponsored by OpenAI
-- OpenAI, ChatGPT, GPT, and Codex are trademarks of their respective owners
-- If you fork or create derivative work, do not imply it is official
+- Local `codex-cli 0.115.0` exposes `codex login --with-api-key`, reading the key from `stdin`.
+- Some official examples still show `codex login --api-key ...`.
+- When docs and local help disagree, prefer `codex login --help`.
 
 ## Sources
 
-- Official Codex documentation: https://developers.openai.com/codex
-- Codex authentication: https://developers.openai.com/codex/auth
-- Local verification: `codex --help`, `codex <command> --help`, `codex --version`
-
-> Documentation may differ between versions. In ambiguous cases, trust `codex --help` from your installed version first.
+- Official Codex docs: https://developers.openai.com/codex
+- Codex auth docs: https://developers.openai.com/codex/auth
+- Local `@openai/codex` package README
+- Local CLI help: `codex --help`

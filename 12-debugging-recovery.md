@@ -1,18 +1,18 @@
-# 12. Безопасный багфикс, валидация и восстановление
+# 12. Safe bug fixing, validation, and recovery
 
-## Безопасный workflow исправления бага
+## Safe bug-fix workflow
 
-### 1. Сначала воспроизведение
+### 1. Reproduce first
 
-Не начинай с правки без подтвержденного симптома.
+Do not start editing before the symptom is confirmed.
 
-Хороший старт:
+Good starting prompt:
 
 ```text
-Сначала воспроизведи баг и покажи root cause hypothesis. Не меняй код, пока не найдешь минимальную область поломки.
+Reproduce the bug first and show a root-cause hypothesis. Do not change code until you identify the smallest broken area.
 ```
 
-### 2. Сделай checkpoint
+### 2. Create a checkpoint
 
 ```bash
 git status
@@ -20,110 +20,110 @@ git switch -c fix/<topic>
 git stash push -u -m "pre-codex-fix"
 ```
 
-### 3. Ограничь область правок
+### 3. Constrain the patch
 
 ```text
-Исправь только модуль X. Не меняй unrelated файлы. Не меняй public API без отдельного подтверждения.
+Fix only module X. Do not change unrelated files. Do not change the public API without separate confirmation.
 ```
 
-### 4. Проси минимальный patch
+### 4. Ask for the smallest useful patch
 
-Это снижает:
+This lowers:
 
-- риск регрессий;
-- размер diff;
-- стоимость review.
+- regression risk;
+- diff size;
+- review cost.
 
-### 5. Валидируй локально
+### 5. Validate locally
 
-Минимум:
+Minimum:
 
 ```bash
 git diff --stat
 git diff
 ```
 
-Потом:
+Then:
 
-- релевантные unit tests;
-- linters/formatters по измененному стеку;
-- manual smoke-test, если автоматических тестов нет.
+- relevant unit tests;
+- relevant linters/formatters;
+- manual smoke test if no automation exists.
 
-Дополнительно:
+Also useful:
 
 ```bash
 codex review --uncommitted
 ```
 
-## Как валидировать изменения
+## What good validation looks like
 
-Хорошая валидация:
+Good validation:
 
-- бьет ровно в измененный код;
-- воспроизводима одной командой;
-- проверяет не только “падает/не падает”, но и ожидаемое поведение.
+- targets the changed code path;
+- is reproducible with a clear command;
+- checks expected behavior, not only “does it crash”.
 
-Слабая валидация:
+Weak validation:
 
-- “ну вроде запускается”;
-- запуск только форматтера;
-- отсутствие проверки diff.
+- “it seems to run”
+- formatting only
+- no diff review
 
-## Как восстанавливаться после неудачной генерации
+## Recovering from a bad generation
 
-### Сценарий 1: patch ушел не туда
+### Scenario 1: the patch went in the wrong direction
 
-Действия:
+Steps:
 
-1. останови сессию;
-2. посмотри `git diff`;
-3. откати только ненужные hunks;
-4. перезапусти задачу уже с более узким prompt.
+1. stop the session;
+2. inspect `git diff`;
+3. revert only the bad hunks;
+4. restart with a narrower prompt.
 
-Безопасный путь:
+Safe command:
 
 ```bash
 git restore -p .
 ```
 
-### Сценарий 2: потерян контекст, но идея была хорошая
+### Scenario 2: the idea was good, but the session lost focus
 
-Используй:
+Use:
 
 ```bash
 codex resume --last
 codex fork --last
 ```
 
-`resume` — продолжить.
+`resume` continues the same line of work.
 
-`fork` — пойти по альтернативной ветке рассуждений.
+`fork` tries a new branch of reasoning.
 
-### Сценарий 3: нужен полный clean restart
+### Scenario 3: you want a clean restart
 
-Действия:
+Steps:
 
-1. сохрани полезный diff;
-2. откати только свои текущие изменения;
-3. сформулируй новую задачу уже как узкий patch.
+1. keep the useful diff if needed;
+2. revert only the current unwanted changes;
+3. restate the task as a smaller patch.
 
-Не делай destructive reset без понимания, что в дереве нет ценных незакоммиченных правок.
+Avoid destructive reset unless you fully understand what is in the working tree.
 
-## Типичные ошибки при багфиксе
+## Common mistakes
 
-- начинать с рефакторинга вместо фикса;
-- не просить regression test;
-- не фиксировать исходное поведение;
-- не проверять `git diff`;
-- запускать слишком широкий набор команд под dangerous mode.
+- refactoring before fixing;
+- skipping regression tests;
+- not documenting the original symptom;
+- not checking `git diff`;
+- running broad dangerous commands for a narrow problem.
 
-## Практический безопасный prompt
+## Practical safe prompt
 
 ```text
-Воспроизведи баг. Исправь минимальным patch. Если возможно, добавь regression test. Не меняй public API и unrelated файлы. После этого прогони релевантные проверки и перечисли остаточные риски.
+Reproduce the bug. Fix it with the smallest useful patch. Add a regression test if appropriate. Do not change the public API or unrelated files. Then run the relevant checks and list the remaining risks.
 ```
 
-## Источники
+## Sources
 
 - https://developers.openai.com/codex/learn/best-practices
 - https://developers.openai.com/codex/noninteractive

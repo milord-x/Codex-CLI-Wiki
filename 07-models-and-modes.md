@@ -1,61 +1,57 @@
-# 07. Модели и режимы
+# 07. Models and modes
 
-## Выбор модели
+## Model selection
 
-Что это:
+What it is:
 
-- модель определяет качество reasoning, скорость и стоимость/доступность.
+- the model controls reasoning quality, speed, and availability.
 
-Как выбрать:
+How to select:
 
 ```bash
 codex -m gpt-5.4
 codex exec -m gpt-5.4 "analyze this repo"
 ```
 
-Когда использовать явный `-m`:
+Use explicit `-m` when:
 
-- сравниваешь поведение моделей;
-- нужна повторяемость;
-- профиль еще не настроен.
-
-Когда не использовать:
-
-- если модель уже зафиксирована профилем и тебя устраивает дефолт.
+- you need repeatability;
+- you are comparing models;
+- the active profile is not enough.
 
 ## Reasoning effort
 
-Что это:
+What it is:
 
-- глубина размышления модели.
+- how much thinking effort the model should spend.
 
-Обычно задается через config:
+Usually set in config:
 
 ```toml
 model_reasoning_effort = "medium"
 ```
 
-Практика:
+Practical defaults:
 
-- `medium` — повседневные задачи;
-- `high` — сложные баги и рефакторинг;
-- `xhigh` — дорогие, но сложные разборы архитектуры и multi-step fixes.
+- `medium` — normal daily work
+- `high` — harder debugging and refactoring
+- `xhigh` — expensive but useful for deep multi-step analysis
 
-Не используй высокий reasoning effort без причины на длинных batch-задачах.
+Do not increase reasoning effort by habit; use it when complexity justifies it.
 
 ## Hosted model vs local OSS provider
 
 ### Hosted model
 
-Используй по умолчанию, если нужен основной официальный опыт Codex.
+Use this by default when you want the normal official Codex experience.
 
 ### `--oss`
 
-Что это:
+What it is:
 
-- переключение на локальный open-source provider.
+- switch to a local open-source model provider.
 
-Синтаксис:
+Syntax:
 
 ```bash
 codex --oss
@@ -63,94 +59,91 @@ codex --oss --local-provider ollama
 codex --oss --local-provider lmstudio
 ```
 
-Когда использовать:
+Use when:
 
-- офлайн или semi-offline сценарии;
-- локальная экспериментальная среда;
-- не нужен hosted Codex.
+- you are experimenting locally;
+- a local model server is available;
+- hosted Codex is not the goal.
 
-Когда не использовать:
+Do not use when:
 
-- нужен предсказуемый результат официальной модели;
-- нет поднятого local model server.
+- you need official hosted behavior;
+- no local model server is running.
 
-Типичные ошибки:
+Typical errors:
 
-- локальный provider не запущен;
-- модель локально не загружена;
-- ожидание parity с hosted Codex.
+- provider not running;
+- model not loaded;
+- assuming behavior parity with hosted Codex.
 
 ## Sandbox mode
 
 ### `read-only`
 
-- Только чтение.
-- Используй для обзора репо, аудита, объяснения кода.
-- Не используй, если задача требует записи файлов.
+- read-only exploration
+- best for audits, repository study, code explanation
 
 ### `workspace-write`
 
-- Нормальный рабочий режим.
-- Используй для повседневной разработки в текущем repo.
+- normal daily mode
+- best for editing inside the current repo
 
 ### `danger-full-access`
 
-- Без sandbox-ограничений.
-- Используй только в изолированной среде, где риск уже закрыт внешним sandbox.
-- В обычном рабочем репозитории это почти всегда плохая идея.
+- no sandbox restriction
+- use only in externally sandboxed, fully understood environments
 
 ## Approval policy
 
 ### `untrusted`
 
-- Безопасный режим: только доверенные команды без запроса.
-- Хорош для аудита и осторожной первой сессии.
+- only trusted commands run without approval
+- good for cautious first contact with a repo
 
 ### `on-request`
 
-- Модель сама просит подтверждение на рискованные команды.
-- Лучший дефолт для интерактивной работы.
+- the model decides when to request approval
+- best general default for interactive work
 
 ### `never`
 
-- Никогда не спрашивать подтверждение.
-- Подходит только для controlled automation.
+- never ask for approval
+- only appropriate for tightly controlled automation
 
 ### `on-failure`
 
-- Локально виден как deprecated.
-- Не закладывай новый workflow на этот режим.
+- visible locally as deprecated
+- avoid building new workflows on it
 
 ## `--full-auto`
 
-Что это:
+What it is:
 
-- shorthand для автоматического режима с sandboxed execution.
+- shorthand for low-friction automatic execution.
 
-Когда использовать:
+Use when:
 
-- задача узкая и понятная;
-- репозиторий доверенный;
-- готов ревьюить итоговый diff.
+- the repo is trusted;
+- the task is narrow and well-defined;
+- you will review the result.
 
-Когда не использовать:
+Do not use when:
 
-- большой legacy repo;
-- опасный рефакторинг;
-- продовый каталог с ценными данными;
-- ситуация, где ты еще не понял проект.
+- the repo is unknown;
+- the refactor is large;
+- production data or broad system access is involved.
 
-## Практический выбор режима
+## Practical combinations
 
-| Сценарий | Модель | Sandbox | Approval |
+| Scenario | Model | Sandbox | Approval |
 |---|---|---|---|
-| Обзор незнакомого репо | дефолтная hosted | `read-only` | `untrusted` |
-| Обычный багфикс | `gpt-5.4` | `workspace-write` | `on-request` |
-| CI one-shot | фиксированная | `workspace-write` | `never` |
-| Очень сложный root-cause analysis | `gpt-5.4` + высокий reasoning | `read-only` или `workspace-write` | `on-request` |
+| Unknown repo review | hosted default | `read-only` | `untrusted` |
+| Normal bug fix | `gpt-5.4` | `workspace-write` | `on-request` |
+| CI one-shot | pinned model | `workspace-write` | `never` |
+| Deep root-cause analysis | `gpt-5.4` with higher reasoning | `read-only` or `workspace-write` | `on-request` |
 
-## Источники
+## Sources
 
 - https://developers.openai.com/codex/models
 - https://developers.openai.com/codex/agent-approvals-security
-- локальная справка `codex --help`
+- local `codex --help`

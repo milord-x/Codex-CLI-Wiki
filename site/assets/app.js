@@ -166,11 +166,7 @@
     if (stored && UI[stored]) {
       return stored;
     }
-    const browser = (navigator.language || "").toLowerCase();
-    if (browser.startsWith("ru")) return "ru";
-    if (browser.startsWith("kk") || browser.startsWith("kz")) return "kk";
-    if (browser.startsWith("zh")) return "zh";
-    if (browser.startsWith("es")) return "es";
+    // Default to English always
     return "en";
   }
 
@@ -248,21 +244,11 @@
   }
 
   function mirrorSlug(currentLocale, targetLocale, slug) {
-    // Try to find equivalent document in target locale
-    let base = slug;
-    if (currentLocale === "en") {
-      base = slug.startsWith("en/") ? slug.slice(3) : slug;
-    } else if (targetLocale === "en") {
-      base = slug.startsWith("en/") ? slug.slice(3) : slug;
+    // All docs are in English now, so just return home for other locales
+    if (targetLocale !== "en") {
+      return homeSlugFor(targetLocale);
     }
-    
-    const candidate = targetLocale === "en" ? "en/" + base : base;
-    if (docsBySlug.has(candidate)) {
-      return candidate;
-    }
-    
-    // Fallback to home page of target locale
-    return homeSlugFor(targetLocale);
+    return slug || homeSlugFor("en");
   }
 
   function setRoute(slug, section, locale) {
@@ -296,11 +282,11 @@
   function renderLanguageSwitch() {
     elements.langSwitch.innerHTML = "";
     const languages = [
-      { code: "en", label: "EN" },
-      { code: "ru", label: "RU" },
-      { code: "kk", label: "KK" },
-      { code: "zh", label: "ZH" },
-      { code: "es", label: "ES" },
+      { code: "en", label: "English" },
+      { code: "ru", label: "Русский" },
+      { code: "kk", label: "Қазақша" },
+      { code: "zh", label: "中文" },
+      { code: "es", label: "Español" },
     ];
     
     languages.forEach((lang) => {

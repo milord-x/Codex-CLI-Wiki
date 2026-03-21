@@ -47,7 +47,7 @@ def collect_docs() -> list[Path]:
 
 
 def locale_for_path(rel: str) -> str:
-    return "en" if rel.startswith("en/") else "ru"
+    return "en"
 
 
 def sort_key(rel: str) -> tuple:
@@ -74,17 +74,23 @@ def group_for(rel: str) -> str:
         return "examples"
     if rel.startswith("en/examples/"):
         return "examples"
-    if rel in {"README.md", "INDEX.md"} or name.startswith(("01-", "02-", "03-", "04-")):
+    if rel in {"README.md", "INDEX.md"} or name.startswith(
+        ("01-", "02-", "03-", "04-")
+    ):
         return "fundamentals"
     if rel.startswith("en/") and (
-        rel in {"en/README.md", "en/INDEX.md"} or name.startswith(("01-", "02-", "03-", "04-"))
+        rel in {"en/README.md", "en/INDEX.md"}
+        or name.startswith(("01-", "02-", "03-", "04-"))
     ):
         return "fundamentals"
     if name.startswith(("05-", "06-", "07-")):
         return "cli"
     if name.startswith(("08-", "09-")):
         return "integration"
-    if name.startswith(("10-", "11-", "12-", "13-")) or name in {"cheatsheet.md", "playbooks.md"}:
+    if name.startswith(("10-", "11-", "12-", "13-")) or name in {
+        "cheatsheet.md",
+        "playbooks.md",
+    }:
         return "practice"
     return "docs"
 
@@ -125,7 +131,9 @@ def resolve_link(base_rel: Path, target: str, known_docs: set[str]) -> tuple[str
         return target, True
 
     if rel_target in known_docs:
-        return doc_href(rel_target, slugify(raw_fragment) if raw_fragment else None), False
+        return doc_href(
+            rel_target, slugify(raw_fragment) if raw_fragment else None
+        ), False
     return target, True
 
 
@@ -221,7 +229,9 @@ def extract_sections(text: str) -> list[dict]:
     return sections
 
 
-def parse_markdown(text: str, base_rel: Path, known_docs: set[str]) -> tuple[str, list[dict], str]:
+def parse_markdown(
+    text: str, base_rel: Path, known_docs: set[str]
+) -> tuple[str, list[dict], str]:
     lines = text.splitlines()
     output: list[str] = []
     headings: list[dict] = []
@@ -254,7 +264,9 @@ def parse_markdown(text: str, base_rel: Path, known_docs: set[str]) -> tuple[str
                 code_lines.append(lines[i])
                 i += 1
             code = "\n".join(code_lines)
-            class_attr = f' class="language-{html.escape(language)}"' if language else ""
+            class_attr = (
+                f' class="language-{html.escape(language)}"' if language else ""
+            )
             output.append(
                 f"<pre><code{class_attr}>{html.escape(code, quote=False)}</code></pre>"
             )
@@ -274,7 +286,11 @@ def parse_markdown(text: str, base_rel: Path, known_docs: set[str]) -> tuple[str
             i += 1
             continue
 
-        if stripped.startswith("|") and i + 1 < len(lines) and is_table_divider(lines[i + 1]):
+        if (
+            stripped.startswith("|")
+            and i + 1 < len(lines)
+            and is_table_divider(lines[i + 1])
+        ):
             flush_paragraph()
             headers = split_table_row(line)
             i += 2
@@ -283,16 +299,18 @@ def parse_markdown(text: str, base_rel: Path, known_docs: set[str]) -> tuple[str
                 rows.append(split_table_row(lines[i]))
                 i += 1
             thead = "".join(
-                f"<th>{render_inline(cell, base_rel, known_docs)}</th>" for cell in headers
+                f"<th>{render_inline(cell, base_rel, known_docs)}</th>"
+                for cell in headers
             )
             tbody_rows = []
             for row in rows:
                 cells = "".join(
-                    f"<td>{render_inline(cell, base_rel, known_docs)}</td>" for cell in row
+                    f"<td>{render_inline(cell, base_rel, known_docs)}</td>"
+                    for cell in row
                 )
                 tbody_rows.append(f"<tr>{cells}</tr>")
             output.append(
-                "<div class=\"table-wrap\"><table>"
+                '<div class="table-wrap"><table>'
                 f"<thead><tr>{thead}</tr></thead><tbody>{''.join(tbody_rows)}</tbody>"
                 "</table></div>"
             )
@@ -314,7 +332,9 @@ def parse_markdown(text: str, base_rel: Path, known_docs: set[str]) -> tuple[str
                 if not match:
                     break
                 item_text = match.group(1 if list_type == "ul" else 2).strip()
-                items.append(f"<li>{render_inline(item_text, base_rel, known_docs)}</li>")
+                items.append(
+                    f"<li>{render_inline(item_text, base_rel, known_docs)}</li>"
+                )
                 i += 1
             output.append(f"<{list_type}>{''.join(items)}</{list_type}>")
             continue
@@ -370,14 +390,24 @@ def main() -> None:
     docs = build_docs()
     payload = {
         "generatedAt": datetime.now(timezone.utc).isoformat(),
-        "homeSlugs": {"ru": "README.md", "en": "en/README.md"},
+        "homeSlugs": {"en": "README.md"},
         "docs": docs,
-        "groups": ["all", "fundamentals", "cli", "integration", "practice", "examples", "docs"],
+        "groups": [
+            "all",
+            "fundamentals",
+            "cli",
+            "integration",
+            "practice",
+            "examples",
+            "docs",
+        ],
     }
 
-    content_js = "window.CODEX_WIKI_DATA = " + json.dumps(
-        payload, ensure_ascii=False, separators=(",", ":")
-    ) + ";\n"
+    content_js = (
+        "window.CODEX_WIKI_DATA = "
+        + json.dumps(payload, ensure_ascii=False, separators=(",", ":"))
+        + ";\n"
+    )
     (DATA_DIR / "content.js").write_text(content_js, encoding="utf-8")
 
 

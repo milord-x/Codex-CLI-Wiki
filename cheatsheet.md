@@ -1,6 +1,6 @@
 # Cheatsheet
 
-## Установка и вход
+## Install and sign in
 
 ```bash
 npm install -g @openai/codex
@@ -11,12 +11,12 @@ printenv OPENAI_API_KEY | codex login --with-api-key
 codex logout
 ```
 
-## Старт сессии
+## Start a session
 
 ```bash
 codex
 codex -C ~/repo
-codex -C ~/repo "сначала изучи проект, потом предложи план"
+codex -C ~/repo "study the project first, then propose a plan"
 codex -m gpt-5.4 -C ~/repo
 ```
 
@@ -28,7 +28,7 @@ wiki codex --build-only
 wiki codex --print-path
 ```
 
-## Безопасные режимы
+## Safe modes
 
 ```bash
 codex -s read-only -a untrusted
@@ -53,12 +53,12 @@ codex review --base main
 codex review --commit <sha>
 ```
 
-## Сессии
+## Sessions
 
 ```bash
 codex resume --last
 codex fork --last
-codex exec resume --last "continue and produce final summary"
+codex exec resume --last "continue and produce a final summary"
 ```
 
 ## Config
@@ -96,16 +96,16 @@ codex completion zsh
 codex completion fish
 ```
 
-## Хорошие стартовые промпты
+## Good starting prompts
 
 ```text
-Изучи репозиторий. Найди entrypoint, тесты и команду запуска. Ничего не меняй без плана.
+Study the repository. Find the entrypoint, tests, and run commands. Do not edit anything before a short plan.
 ```
 
 ```text
-Воспроизведи баг, исправь его минимальным patch, прогони релевантные тесты и дай короткий diff summary.
+Reproduce the bug, fix it with the smallest useful patch, run the relevant tests, and summarize the remaining risks.
 ```
 
 ```text
-Сделай code review только по измененным файлам. Нужны findings по серьезности, без воды.
+Review only the changed files. I want findings by severity, not a long overview.
 ```

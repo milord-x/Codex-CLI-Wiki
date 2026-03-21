@@ -63,6 +63,96 @@
         examples: "Примеры",
         docs: "Документы",
       }
+    },
+    kk: {
+      brandEyebrow: "Құжаттама орталығы",
+      brandName: "Codex CLI Wiki",
+      pageEyebrow: "Құжаттама",
+      searchLabel: "Іздеу",
+      searchPlaceholder: "Құжаттамадан іздеу...",
+      tocEyebrow: "Бетте",
+      mobileToggle: "Бөлімдер",
+      homeButton: "Басты",
+      copyLink: "Сілтеме көшіру",
+      copied: "Көшірілді!",
+      copyFailed: "Қате",
+      noResultsTitle: "Ештеңе табылмады",
+      noResultsBody: "Іздеу немесе сүзгілерді өзгертіңіз.",
+      readmeHub: "Басты",
+      markdown: "Markdown",
+      sectionsWord: "бөлім",
+      buildLabel: "Жаңартылды",
+      sourceLabel: "Дереккөз",
+      noToc: "Бұл құжатта тақырыптар жоқ.",
+      groups: {
+        all: "Барлығы",
+        fundamentals: "Негіздер",
+        cli: "CLI",
+        integration: "Интеграция",
+        practice: "Тәжірибе",
+        examples: "Мысалдар",
+        docs: "Құжаттар",
+      }
+    },
+    zh: {
+      brandEyebrow: "文档中心",
+      brandName: "Codex CLI Wiki",
+      pageEyebrow: "文档",
+      searchLabel: "搜索",
+      searchPlaceholder: "搜索文档...",
+      tocEyebrow: "页面导航",
+      mobileToggle: "章节",
+      homeButton: "首页",
+      copyLink: "复制链接",
+      copied: "已复制！",
+      copyFailed: "失败",
+      noResultsTitle: "未找到结果",
+      noResultsBody: "请尝试调整搜索条件或筛选器。",
+      readmeHub: "首页",
+      markdown: "Markdown",
+      sectionsWord: "章节",
+      buildLabel: "更新于",
+      sourceLabel: "来源",
+      noToc: "本文档没有目录。",
+      groups: {
+        all: "全部",
+        fundamentals: "基础",
+        cli: "CLI 参考",
+        integration: "集成",
+        practice: "实践",
+        examples: "示例",
+        docs: "文档",
+      }
+    },
+    es: {
+      brandEyebrow: "Centro de documentación",
+      brandName: "Codex CLI Wiki",
+      pageEyebrow: "Documentación",
+      searchLabel: "Buscar",
+      searchPlaceholder: "Buscar en la documentación...",
+      tocEyebrow: "En esta página",
+      mobileToggle: "Secciones",
+      homeButton: "Inicio",
+      copyLink: "Copiar enlace",
+      copied: "¡Copiado!",
+      copyFailed: "Error",
+      noResultsTitle: "Sin resultados",
+      noResultsBody: "Intenta ajustar tu búsqueda o filtros.",
+      readmeHub: "Inicio",
+      markdown: "Markdown",
+      sectionsWord: "secciones",
+      buildLabel: "Actualizado",
+      sourceLabel: "Fuente",
+      noToc: "Este documento no tiene encabezados.",
+      groups: {
+        all: "Todo",
+        fundamentals: "Fundamentos",
+        cli: "Referencia CLI",
+        integration: "Integración",
+        practice: "Práctica",
+        examples: "Ejemplos",
+        docs: "Documentos",
+      }
     }
   };
 
@@ -76,6 +166,11 @@
     if (stored && UI[stored]) {
       return stored;
     }
+    const browser = (navigator.language || "").toLowerCase();
+    if (browser.startsWith("ru")) return "ru";
+    if (browser.startsWith("kk") || browser.startsWith("kz")) return "kk";
+    if (browser.startsWith("zh")) return "zh";
+    if (browser.startsWith("es")) return "es";
     return "en";
   }
 
@@ -193,15 +288,24 @@
 
   function renderLanguageSwitch() {
     elements.langSwitch.innerHTML = "";
-    ["en", "ru"].forEach((locale) => {
+    const languages = [
+      { code: "en", label: "EN" },
+      { code: "ru", label: "RU" },
+      { code: "kk", label: "KK" },
+      { code: "zh", label: "ZH" },
+      { code: "es", label: "ES" },
+    ];
+    
+    languages.forEach((lang) => {
       const button = document.createElement("button");
       button.type = "button";
-      button.className = "lang-btn" + (state.locale === locale ? " active" : "");
-      button.textContent = locale.toUpperCase();
-      button.setAttribute("aria-pressed", state.locale === locale);
+      button.className = "lang-btn" + (state.locale === lang.code ? " active" : "");
+      button.textContent = lang.label;
+      button.setAttribute("aria-pressed", state.locale === lang.code);
+      button.setAttribute("title", UI[lang.code]?.brandEyebrow || lang.code);
       button.addEventListener("click", function () {
         const nextSlug = mirrorSlug(locale, state.slug || homeSlugFor(state.locale));
-        setRoute(nextSlug, "", locale);
+        setRoute(nextSlug, "", lang.code);
       });
       elements.langSwitch.appendChild(button);
     });
@@ -393,18 +497,15 @@
     // Remove HTML badges and images from README/markdown files
     elements.docContent.querySelectorAll('p, div, h1, h2').forEach(el => {
       const html = el.innerHTML || '';
-      // Skip if it's a real content element
       if (el.tagName === 'P' && el.querySelector('code, strong, em, a:not(img)')) return;
       if (el.tagName === 'H1' && el.textContent.length > 10) return;
       if (el.tagName === 'H2' && el.textContent.length > 10) return;
       
-      // Hide elements containing only shields.io badges or centered images
       if (html.includes('shields.io') || html.includes('img.shields')) {
         el.remove();
         return;
       }
       
-      // Hide standalone image elements (screenshot.png, etc)
       if (el.tagName === 'P' && el.querySelector('img') && el.querySelectorAll('img, a').length <= 2) {
         const imgs = el.querySelectorAll('img');
         const isOnlyImages = Array.from(imgs).every(img => 
@@ -416,7 +517,6 @@
       }
     });
     
-    // Remove h1 if it looks like a badge header
     const firstH1 = elements.docContent.querySelector('h1');
     if (firstH1 && (firstH1.innerHTML.includes('img') || firstH1.textContent.includes('Badge'))) {
       firstH1.remove();

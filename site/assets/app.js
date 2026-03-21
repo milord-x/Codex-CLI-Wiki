@@ -4,26 +4,56 @@
   const docsBySlug = new Map(docs.map((doc) => [doc.slug, doc]));
 
   const UI = {
+    en: {
+      brandEyebrow: "Documentation Hub",
+      brandName: "Codex CLI Wiki",
+      pageEyebrow: "Documentation",
+      searchLabel: "Search",
+      searchPlaceholder: "Search documentation...",
+      tocEyebrow: "On this page",
+      mobileToggle: "Sections",
+      homeButton: "Home",
+      copyLink: "Copy link",
+      copied: "Copied!",
+      copyFailed: "Failed",
+      noResultsTitle: "Nothing found",
+      noResultsBody: "Try adjusting your search or filters.",
+      readmeHub: "Home",
+      markdown: "Markdown",
+      sectionsWord: "sections",
+      buildLabel: "Updated",
+      sourceLabel: "Source",
+      noToc: "No headings in this document.",
+      groups: {
+        all: "All",
+        fundamentals: "Fundamentals",
+        cli: "CLI Reference",
+        integration: "Integration",
+        practice: "Practice",
+        examples: "Examples",
+        docs: "Documents",
+      }
+    },
     ru: {
-      brandEyebrow: "GitHub Pages",
+      brandEyebrow: "База документации",
       brandName: "Codex CLI Wiki",
       pageEyebrow: "Документация",
       searchLabel: "Поиск",
       searchPlaceholder: "Поиск по документации...",
-      tocEyebrow: "Навигация",
+      tocEyebrow: "На странице",
       mobileToggle: "Разделы",
-      homeButton: "На главную",
-      copyLink: "Копировать ссылку",
+      homeButton: "Главная",
+      copyLink: "Копировать",
       copied: "Скопировано!",
       copyFailed: "Ошибка",
       noResultsTitle: "Ничего не найдено",
-      noResultsBody: "Попробуйте изменить запрос или сбросить фильтры.",
+      noResultsBody: "Попробуйте изменить запрос или фильтры.",
       readmeHub: "Главная",
       markdown: "Markdown",
       sectionsWord: "разделов",
       buildLabel: "Обновлено",
       sourceLabel: "Источник",
-      noToc: "В этом документе нет оглавления.",
+      noToc: "В этом документе нет заголовков.",
       groups: {
         all: "Все",
         fundamentals: "Основы",
@@ -32,52 +62,6 @@
         practice: "Практика",
         examples: "Примеры",
         docs: "Документы",
-      },
-      welcome: {
-        title: "Добро пожаловать в Codex CLI Wiki",
-        subtitle: "Структурированная документация для эффективной работы с Codex CLI",
-        quickLinks: "Быстрый старт",
-        gettingStarted: "Начать работу",
-        dailyUse: "Повседневное использование",
-        advanced: "Продвинутые темы"
-      }
-    },
-    en: {
-      brandEyebrow: "GitHub Pages",
-      brandName: "Codex CLI Wiki",
-      pageEyebrow: "Documentation",
-      searchLabel: "Search",
-      searchPlaceholder: "Search documentation...",
-      tocEyebrow: "Navigation",
-      mobileToggle: "Sections",
-      homeButton: "Home",
-      copyLink: "Copy link",
-      copied: "Copied!",
-      copyFailed: "Failed",
-      noResultsTitle: "Nothing found",
-      noResultsBody: "Try a different query or reset filters.",
-      readmeHub: "Home",
-      markdown: "Markdown",
-      sectionsWord: "sections",
-      buildLabel: "Updated",
-      sourceLabel: "Source",
-      noToc: "This document has no table of contents.",
-      groups: {
-        all: "All",
-        fundamentals: "Fundamentals",
-        cli: "CLI",
-        integration: "Integration",
-        practice: "Practice",
-        examples: "Examples",
-        docs: "Documents",
-      },
-      welcome: {
-        title: "Welcome to Codex CLI Wiki",
-        subtitle: "Structured documentation for efficient Codex CLI workflow",
-        quickLinks: "Quick Start",
-        gettingStarted: "Get Started",
-        dailyUse: "Daily Use",
-        advanced: "Advanced Topics"
       }
     }
   };
@@ -92,8 +76,7 @@
     if (stored && UI[stored]) {
       return stored;
     }
-    const browser = (navigator.language || "").toLowerCase();
-    return browser.startsWith("ru") ? "ru" : "en";
+    return "en";
   }
 
   function homeSlugFor(locale) {
@@ -123,12 +106,12 @@
     copyLinkButton: document.getElementById("copyLinkButton"),
     homeButton: document.getElementById("homeButton"),
     mobileToggle: document.getElementById("mobileToggle"),
+    mobileToggleText: document.getElementById("mobileToggleText"),
     langSwitch: document.getElementById("langSwitch"),
     brandEyebrow: document.getElementById("brandEyebrow"),
     brandName: document.getElementById("brandName"),
     pageEyebrow: document.getElementById("pageEyebrow"),
     searchLabel: document.getElementById("searchLabel"),
-    footerLabel: document.getElementById("footerLabel"),
     tocEyebrow: document.getElementById("tocEyebrow"),
   };
 
@@ -210,12 +193,12 @@
 
   function renderLanguageSwitch() {
     elements.langSwitch.innerHTML = "";
-    ["ru", "en"].forEach((locale) => {
+    ["en", "ru"].forEach((locale) => {
       const button = document.createElement("button");
       button.type = "button";
-      button.className = "lang-button" + (state.locale === locale ? " active" : "");
+      button.className = "lang-btn" + (state.locale === locale ? " active" : "");
       button.textContent = locale.toUpperCase();
-      button.title = locale === "ru" ? "Русский" : "English";
+      button.setAttribute("aria-pressed", state.locale === locale);
       button.addEventListener("click", function () {
         const nextSlug = mirrorSlug(locale, state.slug || homeSlugFor(state.locale));
         setRoute(nextSlug, "", locale);
@@ -229,7 +212,7 @@
     (data.groups || []).forEach((groupKey) => {
       const button = document.createElement("button");
       button.type = "button";
-      button.className = "filter-chip" + (state.group === groupKey ? " active" : "");
+      button.className = "filter-btn" + (state.group === groupKey ? " active" : "");
       button.textContent = translateGroup(groupKey);
       button.addEventListener("click", function () {
         state.group = groupKey;
@@ -261,17 +244,14 @@
         const link = document.createElement("a");
         link.className = "nav-link" + (doc.slug === state.slug ? " active" : "");
         link.href = encodeHash(doc.slug, "", state.locale);
+        link.setAttribute("data-slug", doc.slug);
         link.innerHTML =
-          '<span class="nav-link-title">' +
-          escapeHtml(doc.title) +
-          "</span>" +
-          '<span class="nav-link-path">' +
-          escapeHtml(doc.sourcePath) +
-          "</span>";
+          '<span class="nav-link-title">' + escapeHtml(doc.title) + '</span>' +
+          '<span class="nav-link-meta">' + escapeHtml(doc.sourcePath) + '</span>';
         link.addEventListener("click", function (event) {
           event.preventDefault();
           setRoute(doc.slug, "", doc.locale);
-          if (window.innerWidth < 940) {
+          if (window.innerWidth < 900) {
             elements.sidebar.classList.remove("open");
           }
         });
@@ -290,33 +270,23 @@
     let index = -1;
     for (const token of tokens) {
       index = lower.indexOf(token);
-      if (index !== -1) {
-        break;
-      }
+      if (index !== -1) break;
     }
-    if (index === -1) {
-      return text.slice(0, 160);
-    }
-    const start = Math.max(0, index - 60);
-    const end = Math.min(text.length, index + 120);
-    const prefix = start > 0 ? "…" : "";
-    const suffix = end < text.length ? "…" : "";
-    return prefix + text.slice(start, end).trim() + suffix;
+    if (index === -1) return text.slice(0, 150);
+    const start = Math.max(0, index - 50);
+    const end = Math.min(text.length, index + 110);
+    return (start > 0 ? "…" : "") + text.slice(start, end).trim() + (end < text.length ? "…" : "");
   }
 
   function searchDocs(query) {
     const normalized = normalizeText(query);
-    if (!normalized) {
-      return [];
-    }
+    if (!normalized) return [];
 
     const tokens = normalized.split(/\s+/).filter(Boolean);
     const results = [];
 
     currentDocs().forEach((doc) => {
-      if (state.group !== "all" && doc.groupKey !== state.group) {
-        return;
-      }
+      if (state.group !== "all" && doc.groupKey !== state.group) return;
 
       let bestScore = 0;
       let bestSection = null;
@@ -327,18 +297,10 @@
         let score = 0;
 
         tokens.forEach((token) => {
-          if (normalizeText(doc.title).includes(token)) {
-            score += 22;
-          }
-          if (normalizeText(translateGroup(doc.groupKey)).includes(token)) {
-            score += 14;
-          }
-          if (title.includes(token)) {
-            score += 10;
-          }
-          if (text.includes(token)) {
-            score += 4;
-          }
+          if (normalizeText(doc.title).includes(token)) score += 22;
+          if (normalizeText(translateGroup(doc.groupKey)).includes(token)) score += 14;
+          if (title.includes(token)) score += 10;
+          if (text.includes(token)) score += 4;
         });
 
         if (score > bestScore) {
@@ -357,98 +319,73 @@
       }
     });
 
-    return results.sort((a, b) => b.score - a.score).slice(0, 24);
+    return results.sort((a, b) => b.score - a.score).slice(0, 20);
   }
 
   function renderSearch() {
     const results = searchDocs(state.query);
     elements.searchResults.innerHTML = "";
+    
     if (!state.query.trim()) {
       elements.searchResults.classList.add("hidden");
       return;
     }
 
+    elements.searchResults.classList.remove("hidden");
+
     if (!results.length) {
-      elements.searchResults.classList.remove("hidden");
       const empty = document.createElement("div");
-      empty.className = "search-result search-empty";
-      empty.innerHTML =
-        '<div class="result-topline"><span class="result-title">' +
-        escapeHtml(ui().noResultsTitle) +
-        "</span></div>" +
-        '<div class="result-snippet">' +
-        escapeHtml(ui().noResultsBody) +
-        "</div>";
+      empty.className = "search-empty";
+      empty.innerHTML = '<span class="search-empty-icon">⊘</span>' +
+        '<span class="search-empty-title">' + escapeHtml(ui().noResultsTitle) + '</span>' +
+        '<span class="search-empty-text">' + escapeHtml(ui().noResultsBody) + '</span>';
       elements.searchResults.appendChild(empty);
       return;
     }
 
-    elements.searchResults.classList.remove("hidden");
     results.forEach((result) => {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "search-result";
       button.innerHTML =
-        '<div class="result-topline">' +
-        '<span class="result-title">' +
-        escapeHtml(result.doc.title) +
-        "</span>" +
-        '<span class="result-section">' +
-        escapeHtml(result.section ? result.section.title : translateGroup(result.doc.groupKey)) +
-        "</span>" +
-        "</div>" +
-        '<div class="result-snippet">' +
-        escapeHtml(result.snippet) +
-        "</div>";
+        '<span class="search-result-title">' + escapeHtml(result.doc.title) + '</span>' +
+        '<span class="search-result-section">' + escapeHtml(result.section?.title || translateGroup(result.doc.groupKey)) + '</span>' +
+        '<span class="search-result-snippet">' + escapeHtml(result.snippet) + '</span>';
       button.addEventListener("click", function () {
         state.query = "";
         elements.searchInput.value = "";
         renderSearch();
-        setRoute(result.doc.slug, result.section && result.section.id, result.doc.locale);
+        setRoute(result.doc.slug, result.section?.id, result.doc.locale);
       });
       elements.searchResults.appendChild(button);
     });
   }
 
   function renderDocHeader(doc) {
-    elements.docCard.classList.toggle("is-readme", !!doc.isReadme);
+    elements.docCard.classList.toggle("is-home", !!doc.isReadme);
     elements.breadcrumb.textContent = doc.sourcePath;
 
     const headingsCount = (doc.headings || []).filter((item) => item.level >= 2).length;
     elements.docHeader.innerHTML =
-      '<div class="doc-meta-row">' +
-      '<span class="meta-pill accent">' +
-      escapeHtml(translateGroup(doc.groupKey)) +
-      "</span>" +
-      '<span class="meta-pill">' +
-      escapeHtml(doc.isReadme ? ui().readmeHub : ui().markdown) +
-      "</span>" +
-      '<span class="meta-pill">' +
-      escapeHtml(String(headingsCount)) +
-      " " +
-      escapeHtml(ui().sectionsWord) +
-      "</span>" +
-      "</div>" +
-      "<h1>" +
-      escapeHtml(doc.title) +
-      "</h1>" +
-      '<div class="doc-excerpt">' +
-      escapeHtml(doc.excerpt || "") +
-      "</div>" +
-      '<div class="doc-source">' +
-      escapeHtml(ui().sourceLabel) +
-      ': <code>' +
-      escapeHtml(doc.sourcePath) +
-      '</code> · <a href="https://github.com/milord-x/Codex-CLI-Wiki" target="_blank" rel="noreferrer">GitHub</a></div>';
+      '<div class="doc-meta">' +
+        '<span class="doc-tag doc-tag--primary">' + escapeHtml(translateGroup(doc.groupKey)) + '</span>' +
+        '<span class="doc-tag">' + escapeHtml(doc.isReadme ? ui().readmeHub : ui().markdown) + '</span>' +
+        '<span class="doc-tag doc-tag--muted">' + headingsCount + ' ' + escapeHtml(ui().sectionsWord) + '</span>' +
+      '</div>' +
+      '<h1 class="doc-title">' + escapeHtml(doc.title) + '</h1>' +
+      '<p class="doc-excerpt">' + escapeHtml(doc.excerpt || "") + '</p>' +
+      '<div class="doc-footer">' +
+        '<span class="doc-source">' + escapeHtml(ui().sourceLabel) + ': <code>' + escapeHtml(doc.sourcePath) + '</code></span>' +
+        '<a href="https://github.com/milord-x/Codex-CLI-Wiki" target="_blank" rel="noreferrer" class="doc-github">GitHub ↗</a>' +
+      '</div>';
   }
 
   function renderDocContent(doc) {
     elements.docContent.innerHTML = doc.html;
-    
-    document.querySelectorAll('.doc-content a').forEach(link => {
-      if (link.href && !link.href.startsWith('#') && !link.href.startsWith('http')) {
+    elements.docContent.querySelectorAll('a').forEach(link => {
+      if (link.href && !link.href.startsWith('#') && !link.href.startsWith(window.location.origin)) {
         link.target = '_blank';
-        link.rel = 'noreferrer';
+        link.rel = 'noreferrer noopener';
       }
     });
   }
@@ -458,14 +395,12 @@
     elements.tocList.innerHTML = "";
 
     if (!headings.length) {
-      elements.tocList.innerHTML = '<div class="toc-empty">' + escapeHtml(ui().noToc) + "</div>";
+      elements.tocList.innerHTML = '<div class="toc-empty">' + escapeHtml(ui().noToc) + '</div>';
     } else {
       headings.forEach((heading) => {
         const link = document.createElement("a");
         link.href = encodeHash(doc.slug, heading.id, doc.locale);
-        link.className =
-          "toc-link level-" +
-          Math.min(Math.max(heading.level, 1), 4) +
+        link.className = "toc-link toc-link--" + Math.min(Math.max(heading.level, 1), 4) +
           (heading.id === state.section ? " active" : "");
         link.textContent = heading.title;
         link.addEventListener("click", function (event) {
@@ -477,12 +412,7 @@
     }
 
     const updatedDate = (data.generatedAt || "").split("T")[0];
-    elements.tocMeta.innerHTML =
-      '<span class="toc-updated">' +
-      escapeHtml(ui().buildLabel) + 
-      ': <time>' + 
-      escapeHtml(updatedDate) + 
-      '</time></span>';
+    elements.tocMeta.innerHTML = '<span class="toc-date">' + escapeHtml(ui().buildLabel) + ': <time>' + escapeHtml(updatedDate) + '</time></span>';
   }
 
   function focusSection(sectionId) {
@@ -492,28 +422,24 @@
     }
     requestAnimationFrame(function () {
       const target = document.getElementById(sectionId);
-      if (!target) {
-        return;
-      }
-      target.classList.remove("section-highlight");
-      target.classList.add("section-highlight");
+      if (!target) return;
+      target.classList.remove("highlight");
+      void target.offsetWidth;
+      target.classList.add("highlight");
       target.scrollIntoView({ behavior: "smooth", block: "start" });
-      setTimeout(function () {
-        target.classList.remove("section-highlight");
-      }, 1400);
+      setTimeout(function () { target.classList.remove("highlight"); }, 1200);
     });
   }
 
   function applyLocaleUi() {
     document.documentElement.lang = state.locale;
-    document.title = "Codex CLI Wiki";
     elements.brandEyebrow.textContent = ui().brandEyebrow;
     elements.brandName.textContent = ui().brandName;
     elements.pageEyebrow.textContent = ui().pageEyebrow;
     elements.searchLabel.textContent = ui().searchLabel;
     elements.searchInput.placeholder = ui().searchPlaceholder;
     elements.tocEyebrow.textContent = ui().tocEyebrow;
-    elements.mobileToggle.textContent = ui().mobileToggle;
+    elements.mobileToggleText.textContent = ui().mobileToggle;
     elements.homeButton.textContent = ui().homeButton;
     elements.copyLinkButton.textContent = ui().copyLink;
   }
@@ -522,12 +448,12 @@
     applyLocaleUi();
     renderLanguageSwitch();
     const doc = docsBySlug.get(state.slug) || docsBySlug.get(homeSlugFor(state.locale));
-    if (!doc) {
-      return;
-    }
+    if (!doc) return;
+    
     state.locale = doc.locale;
     window.localStorage.setItem("codexWikiLocale", state.locale);
-    document.title = doc.title + " · Codex CLI Wiki";
+    document.title = "Codex CLI Wiki";
+    
     renderNav();
     renderFilters();
     renderDocHeader(doc);
@@ -539,9 +465,9 @@
 
   function escapeHtml(value) {
     return String(value)
-      .replaceAll("&", "&amp;")
-      .replaceAll("<", "&lt;")
-      .replaceAll(">", "&gt;");
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
   }
 
   function handleHashChange() {
@@ -552,25 +478,20 @@
     render();
   }
 
-  elements.searchInput.addEventListener("input", function (event) {
-    state.query = event.target.value;
+  elements.searchInput.addEventListener("input", function (e) {
+    state.query = e.target.value;
     renderSearch();
   });
 
   elements.copyLinkButton.addEventListener("click", function () {
-    navigator.clipboard
-      .writeText(window.location.href)
+    navigator.clipboard.writeText(window.location.href)
       .then(function () {
         elements.copyLinkButton.textContent = ui().copied;
-        setTimeout(function () {
-          elements.copyLinkButton.textContent = ui().copyLink;
-        }, 1200);
+        setTimeout(function () { elements.copyLinkButton.textContent = ui().copyLink; }, 1200);
       })
       .catch(function () {
         elements.copyLinkButton.textContent = ui().copyFailed;
-        setTimeout(function () {
-          elements.copyLinkButton.textContent = ui().copyLink;
-        }, 1200);
+        setTimeout(function () { elements.copyLinkButton.textContent = ui().copyLink; }, 1200);
       });
   });
 
@@ -582,18 +503,17 @@
     elements.sidebar.classList.toggle("open");
   });
 
-  document.addEventListener("keydown", function (event) {
-    if (event.key === "/" && document.activeElement !== elements.searchInput) {
-      event.preventDefault();
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "/" && document.activeElement !== elements.searchInput) {
+      e.preventDefault();
       elements.searchInput.focus();
       elements.searchInput.select();
     }
-    if (event.key === "Escape" && elements.sidebar.classList.contains("open")) {
+    if (e.key === "Escape" && elements.sidebar.classList.contains("open")) {
       elements.sidebar.classList.remove("open");
     }
   });
 
   window.addEventListener("hashchange", handleHashChange);
-
   handleHashChange();
 })();

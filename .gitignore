@@ -9,8 +9,9 @@ __pycache__/
 dist/
 build/
 
-# Generated site (built by CI)
-site/
+# Generated site content (built by CI)
+site/data/
+site/*.html
 
 # OS
 .DS_Store

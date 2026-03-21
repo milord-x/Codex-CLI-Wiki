@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZZ4L4WXW7K"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-ZZ4L4WXW7K');
+    </script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Codex CLI wiki</title>
+    <meta
+      name="description"
+      content="Codex CLI Wiki — структурированная документация с поиском и навигацией."
+    />
+    <link rel="stylesheet" href="./assets/style.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-panel">
+          <div class="brand">
+            <div class="brand-mark">C</div>
+            <div>
+              <div class="eyebrow" id="brandEyebrow">GitHub Pages</div>
+              <h1 id="brandName">Codex CLI wiki</h1>
+            </div>
+          </div>
+
+          <div class="lang-switch" id="langSwitch"></div>
+
+          <button class="mobile-toggle" id="mobileToggle" type="button">
+            Разделы
+          </button>
+
+          <label class="search-box" for="searchInput">
+            <span id="searchLabel">Поиск по словам и разделам</span>
+            <input
+              id="searchInput"
+              type="search"
+              placeholder="Например: sandbox, API key, bugfix"
+              autocomplete="off"
+            />
+          </label>
+
+          <div class="filters" id="filters"></div>
+          <div class="search-results hidden" id="searchResults"></div>
+
+          <nav class="nav-tree" id="navTree"></nav>
+
+          <div class="sidebar-footer">
+            <a href="https://github.com/milord-x/Codex-CLI-Wiki" target="_blank" rel="noreferrer">GitHub</a>
+          </div>
+        </div>
+      </aside>
+
+      <main class="content-area">
+        <header class="page-toolbar">
+          <div class="toolbar-copy">
+            <div class="eyebrow" id="pageEyebrow">Codex CLI Wiki</div>
+            <div id="pageBreadcrumb">Codex CLI Wiki</div>
+          </div>
+          <div class="toolbar-actions">
+            <button class="ghost-button" id="homeButton" type="button">README</button>
+            <button class="ghost-button" id="copyLinkButton" type="button">Скопировать ссылку</button>
+          </div>
+        </header>
+
+        <article class="doc-card" id="docCard">
+          <div class="doc-header" id="docHeader"></div>
+          <div class="doc-content" id="docContent"></div>
+        </article>
+      </main>
+
+      <aside class="toc-panel">
+        <div class="toc-card">
+          <div class="eyebrow" id="tocEyebrow">Навигация по документу</div>
+          <div class="toc-list" id="tocList"></div>
+          <div class="toc-meta" id="tocMeta"></div>
+        </div>
+      </aside>
+    </div>
+
+    <script src="./data/content.js"></script>
+    <script src="./assets/app.js"></script>
+  </body>
+</html>

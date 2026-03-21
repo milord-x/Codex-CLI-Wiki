@@ -231,9 +231,7 @@
     }
     let slug = params.get("doc");
     const section = params.get("section") || "";
-    if (slug && docsBySlug.has(slug)) {
-      locale = docsBySlug.get(slug).locale;
-    } else {
+    if (!slug || !docsBySlug.has(slug)) {
       slug = homeSlugFor(locale);
     }
     return { locale, slug, section };
@@ -249,13 +247,22 @@
     return "#" + params.toString();
   }
 
-  function mirrorSlug(locale, slug) {
-    const base = slug.startsWith("en/") ? slug.slice(3) : slug;
-    const candidate = locale === "en" ? "en/" + base : base;
+  function mirrorSlug(currentLocale, targetLocale, slug) {
+    // Try to find equivalent document in target locale
+    let base = slug;
+    if (currentLocale === "en") {
+      base = slug.startsWith("en/") ? slug.slice(3) : slug;
+    } else if (targetLocale === "en") {
+      base = slug.startsWith("en/") ? slug.slice(3) : slug;
+    }
+    
+    const candidate = targetLocale === "en" ? "en/" + base : base;
     if (docsBySlug.has(candidate)) {
       return candidate;
     }
-    return homeSlugFor(locale);
+    
+    // Fallback to home page of target locale
+    return homeSlugFor(targetLocale);
   }
 
   function setRoute(slug, section, locale) {
@@ -304,7 +311,8 @@
       button.setAttribute("aria-pressed", state.locale === lang.code);
       button.setAttribute("title", UI[lang.code]?.brandEyebrow || lang.code);
       button.addEventListener("click", function () {
-        const nextSlug = mirrorSlug(state.locale, state.slug || homeSlugFor(state.locale));
+        if (lang.code === state.locale) return;
+        const nextSlug = mirrorSlug(state.locale, lang.code, state.slug || homeSlugFor(state.locale));
         setRoute(nextSlug, "", lang.code);
       });
       elements.langSwitch.appendChild(button);

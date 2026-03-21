@@ -855,12 +855,16 @@ body {
   border-radius: var(--radius-lg);
   border: 1px solid var(--border);
   background: var(--bg-elevated);
+  max-width: 100%;
+  display: block;
 }
 
 .doc-content table {
   width: 100%;
+  min-width: 600px;
   border-collapse: collapse;
   font-size: 13px;
+  display: table;
 }
 
 .doc-content th,
@@ -868,6 +872,9 @@ body {
   padding: 12px 14px;
   text-align: left;
   border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  word-wrap: break-word;
+  max-width: 300px;
 }
 
 .doc-content th {
@@ -877,6 +884,17 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--text-secondary);
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+.doc-content tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.doc-content tbody tr:hover td {
+  background: var(--bg-subtle);
 }
 
 .doc-content tbody tr:last-child td {

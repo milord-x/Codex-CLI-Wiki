@@ -304,7 +304,7 @@
       button.setAttribute("aria-pressed", state.locale === lang.code);
       button.setAttribute("title", UI[lang.code]?.brandEyebrow || lang.code);
       button.addEventListener("click", function () {
-        const nextSlug = mirrorSlug(locale, state.slug || homeSlugFor(state.locale));
+        const nextSlug = mirrorSlug(state.locale, state.slug || homeSlugFor(state.locale));
         setRoute(nextSlug, "", lang.code);
       });
       elements.langSwitch.appendChild(button);

@@ -1,22 +1,12 @@
 <!DOCTYPE html>
 <html lang="ru">
   <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-ZZ4L4WXW7K"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-ZZ4L4WXW7K');
-    </script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Codex CLI wiki</title>
-    <meta
-      name="description"
-      content="Codex CLI Wiki — структурированная документация с поиском и навигацией."
-    />
+    <title>Codex CLI Wiki</title>
+    <meta name="description" content="Codex CLI Wiki — структурированная документация по Codex CLI с поиском и навигацией." />
+    <meta name="theme-color" content="#2563eb" />
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%232563eb'/><text y='.9em' x='50%' text-anchor='middle' font-size='70' fill='white'>C</text></svg>" />
     <link rel="stylesheet" href="./assets/style.css" />
   </head>
   <body>
@@ -27,25 +17,28 @@
             <div class="brand-mark">C</div>
             <div>
               <div class="eyebrow" id="brandEyebrow">GitHub Pages</div>
-              <h1 id="brandName">Codex CLI wiki</h1>
+              <h1 id="brandName">Codex CLI Wiki</h1>
             </div>
           </div>
 
           <div class="lang-switch" id="langSwitch"></div>
 
           <button class="mobile-toggle" id="mobileToggle" type="button">
-            Разделы
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 12h18M3 6h18M3 18h18"/>
+            </svg>
+            <span id="mobileToggleText">Разделы</span>
           </button>
 
-          <label class="search-box" for="searchInput">
-            <span id="searchLabel">Поиск по словам и разделам</span>
+          <div class="search-box">
+            <span id="searchLabel">Поиск</span>
             <input
               id="searchInput"
               type="search"
-              placeholder="Например: sandbox, API key, bugfix"
+              placeholder="Поиск по документации..."
               autocomplete="off"
             />
-          </label>
+          </div>
 
           <div class="filters" id="filters"></div>
           <div class="search-results hidden" id="searchResults"></div>
@@ -53,7 +46,9 @@
           <nav class="nav-tree" id="navTree"></nav>
 
           <div class="sidebar-footer">
-            <a href="https://github.com/milord-x/Codex-CLI-Wiki" target="_blank" rel="noreferrer">GitHub</a>
+            <a href="https://github.com/milord-x/Codex-CLI-Wiki" target="_blank" rel="noreferrer">
+              View on GitHub →
+            </a>
           </div>
         </div>
       </aside>
@@ -61,12 +56,12 @@
       <main class="content-area">
         <header class="page-toolbar">
           <div class="toolbar-copy">
-            <div class="eyebrow" id="pageEyebrow">Codex CLI Wiki</div>
-            <div id="pageBreadcrumb">Codex CLI Wiki</div>
+            <div class="eyebrow" id="pageEyebrow">Документация</div>
+            <div id="pageBreadcrumb" style="font-size: 14px; font-weight: 500;"></div>
           </div>
           <div class="toolbar-actions">
-            <button class="ghost-button" id="homeButton" type="button">README</button>
-            <button class="ghost-button" id="copyLinkButton" type="button">Скопировать ссылку</button>
+            <button class="ghost-button" id="homeButton" type="button">На главную</button>
+            <button class="ghost-button" id="copyLinkButton" type="button">Копировать ссылку</button>
           </div>
         </header>
 
@@ -78,7 +73,7 @@
 
       <aside class="toc-panel">
         <div class="toc-card">
-          <div class="eyebrow" id="tocEyebrow">Навигация по документу</div>
+          <div class="eyebrow" id="tocEyebrow">Навигация</div>
           <div class="toc-list" id="tocList"></div>
           <div class="toc-meta" id="tocMeta"></div>
         </div>

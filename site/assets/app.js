@@ -5,27 +5,25 @@
 
   const UI = {
     ru: {
-      brandEyebrow: "Local Knowledge Base",
-      brandName: "Codex CLI wiki",
-      pageEyebrow: "Offline HTML Edition",
-      searchLabel: "Поиск по словам и разделам",
-      searchPlaceholder: "Например: sandbox, API key, bugfix",
-      footerLabel: "Открытие через терминал",
-      tocEyebrow: "Навигация по документу",
+      brandEyebrow: "GitHub Pages",
+      brandName: "Codex CLI Wiki",
+      pageEyebrow: "Документация",
+      searchLabel: "Поиск",
+      searchPlaceholder: "Поиск по документации...",
+      tocEyebrow: "Навигация",
       mobileToggle: "Разделы",
-      homeButton: "README",
-      copyLink: "Скопировать ссылку",
-      copied: "Скопировано",
-      copyFailed: "Не удалось",
+      homeButton: "На главную",
+      copyLink: "Копировать ссылку",
+      copied: "Скопировано!",
+      copyFailed: "Ошибка",
       noResultsTitle: "Ничего не найдено",
-      noResultsBody: "Попробуй сократить запрос или переключить фильтр разделов.",
-      readmeHub: "README / Hub",
+      noResultsBody: "Попробуйте изменить запрос или сбросить фильтры.",
+      readmeHub: "Главная",
       markdown: "Markdown",
       sectionsWord: "разделов",
-      buildLabel: "Сборка",
-      openLabel: "Открытие",
+      buildLabel: "Обновлено",
       sourceLabel: "Источник",
-      noToc: "У этого документа нет структурного оглавления.",
+      noToc: "В этом документе нет оглавления.",
       groups: {
         all: "Все",
         fundamentals: "Основы",
@@ -35,29 +33,35 @@
         examples: "Примеры",
         docs: "Документы",
       },
+      welcome: {
+        title: "Добро пожаловать в Codex CLI Wiki",
+        subtitle: "Структурированная документация для эффективной работы с Codex CLI",
+        quickLinks: "Быстрый старт",
+        gettingStarted: "Начать работу",
+        dailyUse: "Повседневное использование",
+        advanced: "Продвинутые темы"
+      }
     },
     en: {
-      brandEyebrow: "Local Knowledge Base",
-      brandName: "Codex CLI wiki",
-      pageEyebrow: "Offline HTML Edition",
-      searchLabel: "Search by words and sections",
-      searchPlaceholder: "For example: sandbox, API key, bugfix",
-      footerLabel: "Open from terminal",
-      tocEyebrow: "Document navigation",
+      brandEyebrow: "GitHub Pages",
+      brandName: "Codex CLI Wiki",
+      pageEyebrow: "Documentation",
+      searchLabel: "Search",
+      searchPlaceholder: "Search documentation...",
+      tocEyebrow: "Navigation",
       mobileToggle: "Sections",
       homeButton: "Home",
       copyLink: "Copy link",
-      copied: "Copied",
+      copied: "Copied!",
       copyFailed: "Failed",
       noResultsTitle: "Nothing found",
-      noResultsBody: "Try a shorter query or switch the section filter.",
-      readmeHub: "README / Hub",
+      noResultsBody: "Try a different query or reset filters.",
+      readmeHub: "Home",
       markdown: "Markdown",
       sectionsWord: "sections",
-      buildLabel: "Build",
-      openLabel: "Open",
+      buildLabel: "Updated",
       sourceLabel: "Source",
-      noToc: "No table of contents for this page.",
+      noToc: "This document has no table of contents.",
       groups: {
         all: "All",
         fundamentals: "Fundamentals",
@@ -67,7 +71,15 @@
         examples: "Examples",
         docs: "Documents",
       },
-    },
+      welcome: {
+        title: "Welcome to Codex CLI Wiki",
+        subtitle: "Structured documentation for efficient Codex CLI workflow",
+        quickLinks: "Quick Start",
+        gettingStarted: "Get Started",
+        dailyUse: "Daily Use",
+        advanced: "Advanced Topics"
+      }
+    }
   };
 
   function detectLocale() {
@@ -203,6 +215,7 @@
       button.type = "button";
       button.className = "lang-button" + (state.locale === locale ? " active" : "");
       button.textContent = locale.toUpperCase();
+      button.title = locale === "ru" ? "Русский" : "English";
       button.addEventListener("click", function () {
         const nextSlug = mirrorSlug(locale, state.slug || homeSlugFor(state.locale));
         setRoute(nextSlug, "", locale);
@@ -231,6 +244,12 @@
   function renderNav() {
     const grouped = groupDocs();
     elements.navTree.innerHTML = "";
+    
+    if (grouped.size === 0) {
+      elements.navTree.innerHTML = '<div class="nav-empty">' + escapeHtml(ui().noResultsTitle) + '</div>';
+      return;
+    }
+    
     for (const [groupKey, items] of grouped.entries()) {
       const wrapper = document.createElement("div");
       wrapper.className = "nav-group";
@@ -252,6 +271,9 @@
         link.addEventListener("click", function (event) {
           event.preventDefault();
           setRoute(doc.slug, "", doc.locale);
+          if (window.innerWidth < 940) {
+            elements.sidebar.classList.remove("open");
+          }
         });
         wrapper.appendChild(link);
       });
@@ -349,7 +371,7 @@
     if (!results.length) {
       elements.searchResults.classList.remove("hidden");
       const empty = document.createElement("div");
-      empty.className = "search-result";
+      empty.className = "search-result search-empty";
       empty.innerHTML =
         '<div class="result-topline"><span class="result-title">' +
         escapeHtml(ui().noResultsTitle) +
@@ -417,11 +439,18 @@
       escapeHtml(ui().sourceLabel) +
       ': <code>' +
       escapeHtml(doc.sourcePath) +
-      "</code></div>";
+      '</code> · <a href="https://github.com/milord-x/Codex-CLI-Wiki" target="_blank" rel="noreferrer">GitHub</a></div>';
   }
 
   function renderDocContent(doc) {
     elements.docContent.innerHTML = doc.html;
+    
+    document.querySelectorAll('.doc-content a').forEach(link => {
+      if (link.href && !link.href.startsWith('#') && !link.href.startsWith('http')) {
+        link.target = '_blank';
+        link.rel = 'noreferrer';
+      }
+    });
   }
 
   function renderToc(doc) {
@@ -429,7 +458,7 @@
     elements.tocList.innerHTML = "";
 
     if (!headings.length) {
-      elements.tocList.innerHTML = '<div class="toc-meta">' + escapeHtml(ui().noToc) + "</div>";
+      elements.tocList.innerHTML = '<div class="toc-empty">' + escapeHtml(ui().noToc) + "</div>";
     } else {
       headings.forEach((heading) => {
         const link = document.createElement("a");
@@ -447,13 +476,13 @@
       });
     }
 
+    const updatedDate = (data.generatedAt || "").split("T")[0];
     elements.tocMeta.innerHTML =
-      escapeHtml(ui().buildLabel) +
-      ": <code>" +
-      escapeHtml((data.generatedAt || "").replace("T", " ").replace("Z", " UTC")) +
-      "</code><br />" +
-      escapeHtml(ui().openLabel) +
-      ": <code>wiki codex</code>";
+      '<span class="toc-updated">' +
+      escapeHtml(ui().buildLabel) + 
+      ': <time>' + 
+      escapeHtml(updatedDate) + 
+      '</time></span>';
   }
 
   function focusSection(sectionId) {
@@ -477,13 +506,12 @@
 
   function applyLocaleUi() {
     document.documentElement.lang = state.locale;
-    document.title = "Codex CLI wiki";
+    document.title = "Codex CLI Wiki";
     elements.brandEyebrow.textContent = ui().brandEyebrow;
     elements.brandName.textContent = ui().brandName;
     elements.pageEyebrow.textContent = ui().pageEyebrow;
     elements.searchLabel.textContent = ui().searchLabel;
     elements.searchInput.placeholder = ui().searchPlaceholder;
-    elements.footerLabel.textContent = ui().footerLabel;
     elements.tocEyebrow.textContent = ui().tocEyebrow;
     elements.mobileToggle.textContent = ui().mobileToggle;
     elements.homeButton.textContent = ui().homeButton;
@@ -499,7 +527,7 @@
     }
     state.locale = doc.locale;
     window.localStorage.setItem("codexWikiLocale", state.locale);
-    document.title = doc.title + " · Codex CLI wiki";
+    document.title = doc.title + " · Codex CLI Wiki";
     renderNav();
     renderFilters();
     renderDocHeader(doc);
@@ -559,6 +587,9 @@
       event.preventDefault();
       elements.searchInput.focus();
       elements.searchInput.select();
+    }
+    if (event.key === "Escape" && elements.sidebar.classList.contains("open")) {
+      elements.sidebar.classList.remove("open");
     }
   });
 

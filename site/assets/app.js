@@ -216,8 +216,8 @@
     homeButton: document.getElementById("homeButton"),
     mobileToggle: document.getElementById("mobileToggle"),
     mobileToggleText: document.getElementById("mobileToggleText"),
-    langDropdown: document.getElementById("langDropdown"),
-    langCurrent: document.getElementById("langCurrent"),
+    langWrap: document.getElementById("langWrap"),
+    langBtn: document.getElementById("langBtn"),
     langCurrentLabel: document.getElementById("langCurrentLabel"),
     langMenu: document.getElementById("langMenu"),
     themeToggle: document.getElementById("themeToggle"),
@@ -329,11 +329,11 @@
   }
 
   function toggleLangDropdown() {
-    elements.langDropdown.classList.toggle("open");
+    elements.langWrap.classList.toggle("open");
   }
 
   function closeLangDropdown() {
-    elements.langDropdown.classList.remove("open");
+    elements.langWrap.classList.remove("open");
   }
 
   // Theme
@@ -690,7 +690,7 @@
   elements.themeToggle.addEventListener("click", toggleTheme);
 
   document.addEventListener("click", function (e) {
-    if (!elements.langDropdown.contains(e.target)) {
+    if (!elements.langWrap.contains(e.target)) {
       closeLangDropdown();
     }
   });

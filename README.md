@@ -1,5 +1,9 @@
 # Codex CLI wiki
 
+<p align="center">
+<img src="assets/screenshot-20260323-050846.png" width="900">
+</p>
+
 Independent English edition of the local Codex CLI wiki.
 
 ## What this contains
